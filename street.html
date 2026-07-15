@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Street — SHOWMEANIMAGE</title>
+  <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
+  <span class="footer-logo">Showmeanimage</span>
+</footer>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script>
+    function toggleNav() {
+      const l = document.querySelector('.nav-links');
+      const open = l.getAttribute('data-open') === 'true';
+      l.setAttribute('data-open', !open);
+    }
+    function submitForm() {
+      const inputs = document.querySelectorAll('.form-input,.form-textarea');
+      let ok = true;
+      inputs.forEach(i => { if (!i.value.trim()) ok = false; });
+      if (!ok) return;
+      document.getElementById('form-success').style.display = 'block';
+      const b = document.querySelector('.form-submit');
+      b.disabled = true; b.style.opacity = '0.5';
+    }
+  </script>
+</head>
+<body>
+<style>
+  /*
+   * CAROUSEL SETTINGS — edit these to customise:
+   * --carousel-speed : total animation duration. Lower = faster.
+   * --carousel-count : number of UNIQUE photos (not counting duplicates).
+   *                    Update width in .carousel-track to match: calc(VAR_WIDTH * count * 2)
+   */
+  :root {
+    --carousel-speed: 20s;
+    --carousel-count: 4;
+  }
+  .carousel-track {
+    animation-duration: var(--carousel-speed) !important;
+  }
+</style>
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">ShowMeAnImage</a>
+  <button class="nav-toggle" onclick="toggleNav()" aria-expanded="false">&#9776;</button>
+  <ul class="nav-links" data-open="false">
+    <li class="dropdown">
+      <a href="portfolio.html">Portfolio &#9660;</a>
+      <div class="dropdown-content">
+        <a href="people.html">People</a>
+        <a href="cars.html">Cars</a>
+        <a href="product.html">Product</a>
+        <a href="street.html">Street</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="concert.html">Concert</a>
+      </div>
+    </li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+<div class="page-wrapper">
+  <!-- ── CAROUSEL HERO ── -->
+  <div class="category-hero">
+    <div class="carousel-track">
+      
+    <div class="carousel-slide">
+      <!-- CAROUSEL IMAGE 1: replace src with your photo -->
+      <img src="Images/street/carousel-01.jpg" alt="Street 1">
+    </div>
+    <div class="carousel-slide">
+      <!-- CAROUSEL IMAGE 2: replace src with your photo -->
+      <img src="Images/street/carousel-02.jpg" alt="Street 2">
+    </div>
+    <div class="carousel-slide">
+      <!-- CAROUSEL IMAGE 3: replace src with your photo -->
+      <img src="Images/street/carousel-03.jpg" alt="Street 3">
+    </div>
+    <div class="carousel-slide">
+      <!-- CAROUSEL IMAGE 4: replace src with your photo -->
+      <img src="Images/street/carousel-04.jpg" alt="Street 4">
+    </div>
+    <div class="carousel-slide">
+      <img src="Images/street/carousel-01.jpg" alt="Street 1">
+    </div>
+    <div class="carousel-slide">
+      <img src="Images/street/carousel-02.jpg" alt="Street 2">
+    </div>
+    <div class="carousel-slide">
+      <img src="Images/street/carousel-03.jpg" alt="Street 3">
+    </div>
+    <div class="carousel-slide">
+      <img src="Images/street/carousel-04.jpg" alt="Street 4">
+    </div>
+    </div>
+  </div>
+  <!-- ── HEADER ── -->
+  <div class="category-header">
+    <span class="category-subtitle">Street Photography</span>
+    <h1 class="category-title">Street</h1>
+    <p class="category-desc">The city unposed. Unplanned moments, honest light, and the energy of everyday life.</p>
+  </div>
+  <!-- ── GALLERY ── -->
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <!-- Replace src with your image: Images/street/street-01.jpg -->
+      <img class="gallery-img" src="Images/street/street-01.jpg" alt="Street 01">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Street No. 01</div>
+        <div class="gallery-item-num">Street Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: Images/street/street-02.jpg -->
+      <img class="gallery-img" src="Images/street/street-02.jpg" alt="Street 02">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Street No. 02</div>
+        <div class="gallery-item-num">Street Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: Images/street/street-03.jpg -->
+      <img class="gallery-img" src="Images/street/street-03.jpg" alt="Street 03">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Street No. 03</div>
+        <div class="gallery-item-num">Street Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: Images/street/street-04.jpg -->
+      <img class="gallery-img" src="Images/street/street-04.jpg" alt="Street 04">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Street No. 04</div>
+        <div class="gallery-item-num">Street Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: Images/street/street-05.jpg -->
+      <img class="gallery-img" src="Images/street/street-05.jpg" alt="Street 05">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Street No. 05</div>
+        <div class="gallery-item-num">Street Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: Images/street/street-06.jpg -->
+      <img class="gallery-img" src="Images/street/street-06.jpg" alt="Street 06">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Street No. 06</div>
+        <div class="gallery-item-num">Street Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: Images/street/street-07.jpg -->
+      <img class="gallery-img" src="Images/street/street-07.jpg" alt="Street 07">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Street No. 07</div>
+        <div class="gallery-item-num">Street Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: Images/street/street-08.jpg -->
+      <img class="gallery-img" src="Images/street/street-08.jpg" alt="Street 08">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Street No. 08</div>
+        <div class="gallery-item-num">Street Photography</div>
+      </div>
+    </div>
+  </div>
+  <footer>
+  <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
+  <span class="footer-logo">Showmeanimage</span>
+</footer>
+</div>
+</body>
+</html>

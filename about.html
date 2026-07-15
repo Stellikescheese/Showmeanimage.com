@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About — SHOWMEANIMAGE</title>
+  <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
+  <span class="footer-logo">Showmeanimage</span>
+</footer>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script>
+    function toggleNav() {
+      const l = document.querySelector('.nav-links');
+      const open = l.getAttribute('data-open') === 'true';
+      l.setAttribute('data-open', !open);
+    }
+    function submitForm() {
+      const inputs = document.querySelectorAll('.form-input,.form-textarea');
+      let ok = true;
+      inputs.forEach(i => { if (!i.value.trim()) ok = false; });
+      if (!ok) return;
+      document.getElementById('form-success').style.display = 'block';
+      const b = document.querySelector('.form-submit');
+      b.disabled = true; b.style.opacity = '0.5';
+    }
+  </script>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">ShowMeAnImage</a>
+  <button class="nav-toggle" onclick="toggleNav()" aria-expanded="false">&#9776;</button>
+  <ul class="nav-links" data-open="false">
+    <li class="dropdown">
+      <a href="portfolio.html">Portfolio &#9660;</a>
+      <div class="dropdown-content">
+        <a href="people.html">People</a>
+        <a href="cars.html">Cars</a>
+        <a href="product.html">Product</a>
+        <a href="street.html">Street</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="concert.html">Concert</a>
+      </div>
+    </li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+<div class="page-wrapper">
+  <div class="about-layout">
+    <div class="about-sidebar">
+      <div>
+        <span class="page-eyebrow">The Photographer</span>
+        <h2 class="about-sidebar-title">Behind<br><em>the Lens</em></h2>
+      </div>
+      <blockquote class="about-sidebar-quote"></blockquote>
+    </div>
+    <div class="about-main">
+      <div class="about-body">
+        <p>I'm <strong>STEL</strong> — a photographer drawn to beautiful light like a fussy moth to special flames, and stories in everyday moments.</p>
+        <p>My work spans <strong>people, cars, product, street, architecture, and concert photography</strong>. I approach every shoot with passion and enthusiasm, always excited to see what I can capture.</p>
+        <p>Shooting both film and digital, I blend the character of analogue with the precision of modern photographic technology.</p>
+      </div>
+      <div class="about-divider"></div>
+      <div class="skills-grid">
+        <div class="skill-item"><span class="skill-label">People</span><div class="skill-bar"><div class="skill-fill" style="width:92%"></div></div></div>
+        <div class="skill-item"><span class="skill-label">Cars</span><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
+        <div class="skill-item"><span class="skill-label">Product</span><div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div></div>
+        <div class="skill-item"><span class="skill-label">Street</span><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+        <div class="skill-item"><span class="skill-label">Architecture</span><div class="skill-bar"><div class="skill-fill" style="width:76%"></div></div></div>
+        <div class="skill-item"><span class="skill-label">Concert</span><div class="skill-bar"><div class="skill-fill" style="width:82%"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <footer>
+  <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
+  <span class="footer-logo">Showmeanimage</span>
+</footer>
+</div>
+</body>
+</html>
