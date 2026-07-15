@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cars — ShowMeAnImage</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script>
+    function toggleNav() {
+      const l = document.querySelector('.nav-links');
+      const open = l.getAttribute('data-open') === 'true';
+      l.setAttribute('data-open', !open);
+    }
+    function submitForm() {
+      const inputs = document.querySelectorAll('.form-input,.form-textarea');
+      let ok = true;
+      inputs.forEach(i => { if (!i.value.trim()) ok = false; });
+      if (!ok) return;
+      document.getElementById('form-success').style.display = 'block';
+      const b = document.querySelector('.form-submit');
+      b.disabled = true; b.style.opacity = '0.5';
+    }
+  </script>
+</head>
+<body>
+<style>
+  /*
+   * CAROUSEL SETTINGS — edit these to customise:
+   * --carousel-speed : total animation duration. Lower = faster.
+   * --carousel-count : number of UNIQUE photos (not counting duplicates).
+   *                    Update width in .carousel-track to match: calc(VAR_WIDTH * count * 2)
+   */
+  :root {
+    --carousel-speed: 20s;
+    --carousel-count: 4;
+  }
+  .carousel-track {
+    animation-duration: var(--carousel-speed) !important;
+  }
+</style>
+<nav class="navbar">
+  <a href="home.html" class="nav-logo">ShowMeAnImage</a>
+  <button class="nav-toggle" onclick="toggleNav()" aria-expanded="false">&#9776;</button>
+  <ul class="nav-links" data-open="false">
+    <li class="dropdown">
+      <a href="portfolio.html">Portfolio &#9660;</a>
+      <div class="dropdown-content">
+        <a href="people.html">People</a>
+        <a href="cars.html">Cars</a>
+        <a href="product.html">Product</a>
+        <a href="street.html">Street</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="concert.html">Concert</a>
+      </div>
+    </li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+<div class="page-wrapper">
+  <!-- ── CAROUSEL HERO ── -->
+  <div class="category-hero">
+    <div class="carousel-track">
+      
+    <div class="carousel-slide">
+      <!-- CAROUSEL IMAGE 1: replace src with your photo -->
+      <img src="Images\cars\cars (1).jpg" alt="Cars 1">
+    </div>
+    <div class="carousel-slide">
+      <!-- CAROUSEL IMAGE 2: replace src with your photo -->
+      <img src="Images\cars\cars-blank.jpg" alt="Cars 2">
+    </div>
+    <div class="carousel-slide">
+      <!-- CAROUSEL IMAGE 3: replace src with your photo -->
+      <img src="Images\cars\cars (2).jpg" alt="Cars 3">
+    </div>
+    <div class="carousel-slide">
+      <!-- CAROUSEL IMAGE 4: replace src with your photo -->
+      <img src="Images\cars\cars (4).jpg" alt="Cars 4">
+    </div>
+    <div class="carousel-slide">
+      <img src="Images\cars\cars (8).jpg" alt="Cars 1">
+    </div>
+    <div class="carousel-slide">
+      <img src="Images\cars\cars (6).jpg" alt="Cars 2">
+    </div>
+    <div class="carousel-slide">
+      <img src="Images\cars\cars (3).jpg" alt="Cars 3">
+    </div>
+    <div class="carousel-slide">
+      <img src="Images\cars\cars (5).jpg" alt="Cars 4">
+    </div>
+    </div>
+  </div>
+  <!-- ── HEADER ── -->
+  <div class="category-header">
+    <span class="category-subtitle">Automotive Photography</span>
+    <h1 class="category-title">Cars</h1>
+    <p class="category-desc">woooo car</p>
+  </div>
+  <!-- ── GALLERY ── -->
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <!-- Replace src with your image: images/Cars/Cars-01.jpg -->
+      <img class="gallery-img" src="Images\cars\cars (1).jpg" alt="Cars 01">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Cars No. 01</div>
+        <div class="gallery-item-num">Automotive Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: images/Cars/Cars-02.jpg -->
+      <img class="gallery-img" src="Images\cars\cars (2).jpg" alt="Cars 02">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Cars No. 02</div>
+        <div class="gallery-item-num">Automotive Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: images/Cars/Cars-03.jpg -->
+      <img class="gallery-img" src="Images\cars\cars (3).jpg" alt="Cars 03">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Cars No. 03</div>
+        <div class="gallery-item-num">Automotive Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: images/Cars/Cars-04.jpg -->
+      <img class="gallery-img" src="Images\cars\cars (4).jpg" alt="Cars 04">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Cars No. 04</div>
+        <div class="gallery-item-num">Automotive Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: images/Cars/Cars-05.jpg -->
+      <img class="gallery-img" src="Images\cars\cars (5).jpg" alt="Cars 05">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Cars No. 05</div>
+        <div class="gallery-item-num">Automotive Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: images/Cars/Cars-06.jpg -->
+      <img class="gallery-img" src="Images\cars\cars (6).jpg" alt="Cars 06">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Cars No. 06</div>
+        <div class="gallery-item-num">Automotive Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: images/Cars/Cars-07.jpg -->
+      <img class="gallery-img" src="Images\cars\cars (7).jpg" alt="Cars 07">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Cars No. 07</div>
+        <div class="gallery-item-num">Automotive Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: images/Cars/Cars-08.jpg -->
+      <img class="gallery-img" src="Images\cars\cars (8).jpg" alt="Cars 08">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Cars No. 08</div>
+        <div class="gallery-item-num">Automotive Photography</div>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <!-- Replace src with your image: images/Cars/Cars-09.jpg -->
+      <img class="gallery-img" src="Images\cars\cars (1).jpg" alt="Cars 09">
+      <div class="gallery-overlay">
+        <div class="gallery-item-title">Cars No. 09</div>
+        <div class="gallery-item-num">Automotive Photography</div>
+      </div>
+    </div>
+  </div>
+  <footer>
+  <span class="footer-copy">&copy; 2024 ShowMeAnImage. All rights reserved.</span>
+  <span class="footer-logo">ShowMeAnImage</span>
+</footer>
+</div>
+</body>
+</html>
