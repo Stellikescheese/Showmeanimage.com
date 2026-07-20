@@ -3,30 +3,101 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Contact — SHOWMEANIMAGE</title>
-  <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
-  <span class="footer-logo">Showmeanimage</span>
-</footer>
+  <title>Contact — ShowMeAnImage</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    .form-error {
+      display: none;
+      margin-top: 1rem;
+      padding: 12px;
+      border: 1px solid #e5c0b8;
+      background: #fdf4f2;
+      font-size: 0.85rem;
+      color: #c0392b;
+    }
+    .form-submit.loading {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .form-input.invalid,
+    .form-textarea.invalid {
+      border-color: #c0392b;
+    }
+  </style>
   <script>
     function toggleNav() {
       const l = document.querySelector('.nav-links');
-      const open = l.getAttribute('data-open') === 'true';
-      l.setAttribute('data-open', !open);
+      l.setAttribute('data-open', l.getAttribute('data-open') === 'true' ? 'false' : 'true');
     }
-    function submitForm() {
-      const inputs = document.querySelectorAll('.form-input,.form-textarea');
-      let ok = true;
-      inputs.forEach(i => { if (!i.value.trim()) ok = false; });
-      if (!ok) return;
-      document.getElementById('form-success').style.display = 'block';
-      const b = document.querySelector('.form-submit');
-      b.disabled = true; b.style.opacity = '0.5';
+
+    async function submitForm() {
+
+      // ── UPDATE THIS URL after deploying your worker ──────────────
+      // It will look like: https://showmeanimage-contact.YOUR_SUBDOMAIN.workers.dev
+      const WORKER_URL = 'https://email_forwarder.showmeanimage.workers.dev/';
+      // ─────────────────────────────────────────────────────────────
+
+      const firstNameEl   = document.getElementById('f-firstname');
+      const lastNameEl    = document.getElementById('f-lastname');
+      const emailEl       = document.getElementById('f-email');
+      const projectTypeEl = document.getElementById('f-project');
+      const messageEl     = document.getElementById('f-message');
+      const btn           = document.querySelector('.form-submit');
+      const successEl     = document.getElementById('form-success');
+      const errorEl       = document.getElementById('form-error');
+
+      // Clear previous states
+      [firstNameEl, emailEl, messageEl].forEach(el => el.classList.remove('invalid'));
+      errorEl.style.display = 'none';
+
+      // Validate required fields
+      let valid = true;
+      if (!firstNameEl.value.trim()) { firstNameEl.classList.add('invalid'); valid = false; }
+      if (!emailEl.value.trim())     { emailEl.classList.add('invalid');     valid = false; }
+      if (!messageEl.value.trim())   { messageEl.classList.add('invalid');   valid = false; }
+      if (!valid) return;
+
+      // Loading state
+      btn.classList.add('loading');
+      btn.textContent = 'Sending…';
+
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstName:   firstNameEl.value.trim(),
+            lastName:    lastNameEl.value.trim(),
+            email:       emailEl.value.trim(),
+            projectType: projectTypeEl.value,
+            message:     messageEl.value.trim(),
+          }),
+        });
+
+        const data = await res.json();
+
+        if (data.ok) {
+          successEl.style.display = 'block';
+          btn.style.display = 'none';
+          // Clear the form
+          [firstNameEl, lastNameEl, emailEl, messageEl].forEach(el => el.value = '');
+          projectTypeEl.selectedIndex = 0;
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (err) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Something went wrong — please try again or email directly.';
+        btn.classList.remove('loading');
+        btn.textContent = 'Send Message →';
+      }
     }
   </script>
 </head>
 <body>
+
 <nav class="navbar">
   <a href="index.html" class="nav-logo">ShowMeAnImage</a>
   <button class="nav-toggle" onclick="toggleNav()" aria-expanded="false">&#9776;</button>
@@ -46,27 +117,38 @@
     <li><a href="contact.html">Contact</a></li>
   </ul>
 </nav>
+
 <div class="page-wrapper contact-layout">
   <div class="contact-left">
-    
     <span class="page-eyebrow">Get in Touch</span>
     <h2 class="contact-title">Let's <em>create</em><br>together</h2>
     <p class="contact-intro">Available for commissions, collaborations, and editorial work. I'd love to hear about your project.</p>
     <div class="contact-details">
-      <div><span class="contact-detail-label">Email</span><span class="contact-detail-value">mail@showmeanimage.com</span></div>
+      <div><span class="contact-detail-label">Email</span><span class="contact-detail-value">hello@showmeanimage.com</span></div>
       <div><span class="contact-detail-label">Based in</span><span class="contact-detail-value">Australia</span></div>
+      <div><span class="contact-detail-label">Available for travel</span><span class="contact-detail-value">Worldwide</span></div>
     </div>
   </div>
+
   <div class="contact-right">
     <p class="form-title">Send a message</p>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">First Name</label><input class="form-input" type="text" placeholder="Jane"></div>
-      <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" type="text" placeholder="Smith"></div>
+      <div class="form-group">
+        <label class="form-label" for="f-firstname">First Name *</label>
+        <input class="form-input" id="f-firstname" type="text" placeholder="Jane">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-lastname">Last Name</label>
+        <input class="form-input" id="f-lastname" type="text" placeholder="Smith">
+      </div>
     </div>
-    <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="jane@example.com"></div>
     <div class="form-group">
-      <label class="form-label">Project Type</label>
-      <select class="form-select">
+      <label class="form-label" for="f-email">Email *</label>
+      <input class="form-input" id="f-email" type="email" placeholder="jane@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="f-project">Project Type</label>
+      <select class="form-select" id="f-project">
         <option value="" disabled selected>Select a category&hellip;</option>
         <option>People / Portrait</option>
         <option>Automotive / Cars</option>
@@ -77,14 +159,20 @@
         <option>Other</option>
       </select>
     </div>
-    <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" placeholder="Tell me about your image&hellip;"></textarea></div>
+    <div class="form-group">
+      <label class="form-label" for="f-message">Message *</label>
+      <textarea class="form-textarea" id="f-message" placeholder="Tell me about your project&hellip;"></textarea>
+    </div>
     <button class="form-submit" onclick="submitForm()">Send Message &rarr;</button>
-    <div class="form-success" id="form-success">&#10003; Thank you &mdash; I'll be in touch within 48 hours.</div>
+    <div class="form-success" id="form-success">&#10003; Thank you — I'll be in touch within 48 hours.</div>
+    <div class="form-error"   id="form-error"></div>
   </div>
 </div>
+
 <footer>
   <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
   <span class="footer-logo">Showmeanimage</span>
 </footer>
+
 </body>
 </html>
