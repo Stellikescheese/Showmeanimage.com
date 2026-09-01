@@ -3,56 +3,48 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>People — SHOWMEANIMAGE</title>
-  <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
-  <span class="footer-logo">Showmeanimage</span>
-</footer>
+  <title>People — ShowMeAnImage</title>
+  <meta name="description" content="Portrait photography by Melbourne-based photographer STEL — people photographed with emotion and intentional light.">
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <script>
-    function toggleNav() {
-      const l = document.querySelector('.nav-links');
-      const open = l.getAttribute('data-open') === 'true';
-      l.setAttribute('data-open', !open);
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /*
+    ┌─────────────────────────────────────────┐
+    │  CAROUSEL SETTINGS — edit here          │
+    │                                         │
+    │  CAROUSEL_COUNT : max photos to cycle   │
+    │    through in the hero carousel.        │
+    │    Auto-shrinks if fewer exist.         │
+    │                                         │
+    │  CAROUSEL_PAUSE : seconds to pause on   │
+    │    each photo. Default: 3               │
+    │                                         │
+    │  CAROUSEL_TRANSITION : seconds for the  │
+    │    slide animation. Default: 0.6        │
+    └─────────────────────────────────────────┘
+    */
+    :root {
+      --CAROUSEL_COUNT:      4;
+      --CAROUSEL_PAUSE:      2.5;
+      --CAROUSEL_TRANSITION: 1;
     }
-    function submitForm() {
-      const inputs = document.querySelectorAll('.form-input,.form-textarea');
-      let ok = true;
-      inputs.forEach(i => { if (!i.value.trim()) ok = false; });
-      if (!ok) return;
-      document.getElementById('form-success').style.display = 'block';
-      const b = document.querySelector('.form-submit');
-      b.disabled = true; b.style.opacity = '0.5';
-    }
-  </script>
+  </style>
 </head>
 <body>
-<style>
-  /*
-   * CAROUSEL SETTINGS — edit these to customise:
-   * --carousel-speed : total animation duration. Lower = faster.
-   * --carousel-count : number of UNIQUE photos (not counting duplicates).
-   *                    Update width in .carousel-track to match: calc(VAR_WIDTH * count * 2)
-   */
-  :root {
-    --carousel-speed: 20s;
-    --carousel-count: 4;
-  }
-  .carousel-track {
-    animation-duration: var(--carousel-speed) !important;
-  }
-</style>
+
 <nav class="navbar">
   <a href="index.html" class="nav-logo">ShowMeAnImage</a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-expanded="false">&#9776;</button>
+  <button class="nav-toggle" onclick="toggleNav()" aria-expanded="false" aria-label="Menu">
+    <span class="nav-toggle-line"></span>
+    <span class="nav-toggle-line"></span>
+    <span class="nav-toggle-line"></span>
+  </button>
   <ul class="nav-links" data-open="false">
     <li class="dropdown">
-      <a href="portfolio.html">Portfolio &#9660;</a>
+      <a href="portfolio.html">Portfolio<span class="nav-caret" aria-hidden="true"> ▼</span></a>
       <div class="dropdown-content">
         <a href="people.html">People</a>
         <a href="cars.html">Cars</a>
-        <a href="product.html">Product</a>
-        <a href="street.html">Street</a>
         <a href="architecture.html">Architecture</a>
         <a href="concert.html">Concert</a>
       </div>
@@ -61,118 +53,78 @@
     <li><a href="contact.html">Contact</a></li>
   </ul>
 </nav>
+
 <div class="page-wrapper">
-  <!-- ── CAROUSEL HERO ── -->
+
+  <!-- ── CAROUSEL ── -->
   <div class="category-hero">
-    <div class="carousel-track">
-      
-    <div class="carousel-slide">
-      <!-- CAROUSEL IMAGE 1: replace src with your photo -->
-      <img src="Images/people/carousel-01.jpg" alt="People 1">
-    </div>
-    <div class="carousel-slide">
-      <!-- CAROUSEL IMAGE 2: replace src with your photo -->
-      <img src="Images/people/carousel-02.jpg" alt="People 2">
-    </div>
-    <div class="carousel-slide">
-      <!-- CAROUSEL IMAGE 3: replace src with your photo -->
-      <img src="Images/people/carousel-03.jpg" alt="People 3">
-    </div>
-    <div class="carousel-slide">
-      <!-- CAROUSEL IMAGE 4: replace src with your photo -->
-      <img src="Images/people/carousel-04.jpg" alt="People 4">
-    </div>
-    <div class="carousel-slide">
-      <img src="Images/people/carousel-01.jpg" alt="People 1">
-    </div>
-    <div class="carousel-slide">
-      <img src="Images/people/carousel-02.jpg" alt="People 2">
-    </div>
-    <div class="carousel-slide">
-      <img src="Images/people/carousel-03.jpg" alt="People 3">
-    </div>
-    <div class="carousel-slide">
-      <img src="Images/people/carousel-04.jpg" alt="People 4">
-    </div>
-    </div>
+    <div class="carousel-track" id="carouselTrack"></div>
+    <button class="carousel-pause-btn" id="carouselPauseBtn" onclick="toggleCarouselPause()" aria-label="Pause slideshow" aria-pressed="false">
+      <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <rect x="6" y="4" width="4" height="16"></rect>
+        <rect x="14" y="4" width="4" height="16"></rect>
+      </svg>
+      <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display:none">
+        <polygon points="6,4 20,12 6,20"></polygon>
+      </svg>
+    </button>
   </div>
+
   <!-- ── HEADER ── -->
   <div class="category-header">
-    <span class="category-subtitle">Portrait Photography</span>
+    <span class="category-subtitle"></span>
     <h1 class="category-title">People</h1>
-    <p class="category-desc">Portraits that hold stillness. Studies of light on skin, expressions caught between thoughts.</p>
+    <p class="category-desc">Soul and emotion captured through portraiture.</p>
   </div>
+
   <!-- ── GALLERY ── -->
-  <div class="gallery-grid">
-    <div class="gallery-item">
-      <!-- Replace src with your image: Images/people/people-01.jpg -->
-      <img class="gallery-img" src="Images/people/people (1).jpg" alt="People 01">
-      <div class="gallery-overlay">
-        <div class="gallery-item-title">People No. 01</div>
-        <div class="gallery-item-num">Portrait Photography</div>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <!-- Replace src with your image: Images/people/people-02.jpg -->
-      <img class="gallery-img" src="Images/people/people (2).jpg" alt="People 02">
-      <div class="gallery-overlay">
-        <div class="gallery-item-title">People No. 02</div>
-        <div class="gallery-item-num">Portrait Photography</div>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <!-- Replace src with your image: Images/people/people-03.jpg -->
-      <img class="gallery-img" src="Images/people/people (3).jpg" alt="People 03">
-      <div class="gallery-overlay">
-        <div class="gallery-item-title">People No. 03</div>
-        <div class="gallery-item-num">Portrait Photography</div>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <!-- Replace src with your image: Images/people/people-04.jpg -->
-      <img class="gallery-img" src="Images/people/people (4).jpg" alt="People 04">
-      <div class="gallery-overlay">
-        <div class="gallery-item-title">People No. 04</div>
-        <div class="gallery-item-num">Portrait Photography</div>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <!-- Replace src with your image: Images/people/people-05.jpg -->
-      <img class="gallery-img" src="Images/people/people (5).jpg alt="People 05">
-      <div class="gallery-overlay">
-        <div class="gallery-item-title">People No. 05</div>
-        <div class="gallery-item-num">Portrait Photography</div>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <!-- Replace src with your image: Images/people/people-06.jpg -->
-      <img class="gallery-img" src="Images/people/people (6).jpg" alt="People 06">
-      <div class="gallery-overlay">
-        <div class="gallery-item-title">People No. 06</div>
-        <div class="gallery-item-num">Portrait Photography</div>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <!-- Replace src with your image: Images/people/people-07.jpg -->
-      <img class="gallery-img" src="Images/people/people (7).jpg" alt="People 07">
-      <div class="gallery-overlay">
-        <div class="gallery-item-title">People No. 07</div>
-        <div class="gallery-item-num">Portrait Photography</div>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <!-- Replace src with your image: Images/people/people-08.jpg -->
-      <img class="gallery-img" src="Images/people/people (8).jpg" alt="People 08">
-      <div class="gallery-overlay">
-        <div class="gallery-item-title">People No. 08</div>
-        <div class="gallery-item-num">Portrait Photography</div>
-      </div>
-    </div>
+  <div class="gallery-grid" id="gallery"></div>
+
   </div>
-  <footer>
-  <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
-  <span class="footer-logo">Showmeanimage</span>
+
+<footer>
+  <span class="footer-copy">&copy; 2026 ShowMeAnImage. All rights reserved.</span>
+  <div class="footer-links">
+    <a href="privacy.html" class="footer-link">Privacy Policy</a>
+  </div>
+  <span class="footer-logo">ShowMeAnImage</span>
 </footer>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
+  <button class="lightbox-arrow lightbox-arrow--prev" id="lb-prev" onclick="shiftLightbox(-1)" aria-label="Previous">&#8249;</button>
+  <div class="lightbox-img-wrap">
+    <img id="lb-img" src="" alt="">
+  </div>
+  <button class="lightbox-arrow lightbox-arrow--next" id="lb-next" onclick="shiftLightbox(1)" aria-label="Next">&#8250;</button>
+  <div class="lightbox-counter" id="lb-counter" aria-live="polite" aria-atomic="true"></div>
 </div>
+
+<script>
+  function toggleNav() {
+      const l = document.querySelector('.nav-links');
+      const btn = document.querySelector('.nav-toggle');
+      const open = l.getAttribute('data-open') === 'true';
+      l.setAttribute('data-open', open ? 'false' : 'true');
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+    }
+</script>
+<script src="gallery.js"></script>
+<script>
+  // ── Curate here ──
+  // carousel: list photo numbers in the order you want them in the hero
+  //   carousel, e.g. [1, 6, 7, 2, 3, 9]. Leave empty [] to auto-use the
+  //   first few in numeric order (count set by --CAROUSEL_COUNT above).
+  // order: list photo numbers in the order you want them in the gallery
+  //   grid, e.g. [3, 1, 2, 6, 4, 5]. Any photos not listed are added
+  //   afterwards in normal numeric order. Leave empty [] for numeric order.
+  initCategoryPage('People', {
+    carousel: [],
+    order: []
+  });
+</script>
+
+<script src="skeleton-loader.js" defer></script>
 </body>
 </html>

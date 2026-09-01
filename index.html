@@ -3,41 +3,34 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Home — SHOWMEANIMAGE</title>
-  <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
-  <span class="footer-logo">Showmeanimage</span>
-</footer>
+  <title>Home — ShowMeAnImage</title>
+  <meta name="description" content="ShowMeAnImage — Melbourne-based photographer STEL, shooting people, cars, architecture, and concerts on film and digital.">
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script>
     function toggleNav() {
       const l = document.querySelector('.nav-links');
+      const btn = document.querySelector('.nav-toggle');
       const open = l.getAttribute('data-open') === 'true';
       l.setAttribute('data-open', !open);
-    }
-    function submitForm() {
-      const inputs = document.querySelectorAll('.form-input,.form-textarea');
-      let ok = true;
-      inputs.forEach(i => { if (!i.value.trim()) ok = false; });
-      if (!ok) return;
-      document.getElementById('form-success').style.display = 'block';
-      const b = document.querySelector('.form-submit');
-      b.disabled = true; b.style.opacity = '0.5';
+      btn.setAttribute('aria-expanded', !open);
     }
   </script>
 </head>
 <body>
 <nav class="navbar">
   <a href="index.html" class="nav-logo">ShowMeAnImage</a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-expanded="false">&#9776;</button>
+  <button class="nav-toggle" onclick="toggleNav()" aria-expanded="false" aria-label="Menu">
+    <span class="nav-toggle-line"></span>
+    <span class="nav-toggle-line"></span>
+    <span class="nav-toggle-line"></span>
+  </button>
   <ul class="nav-links" data-open="false">
     <li class="dropdown">
-      <a href="portfolio.html">Portfolio &#9660;</a>
+      <a href="portfolio.html">Portfolio<span class="nav-caret" aria-hidden="true"> ▼</span></a>
       <div class="dropdown-content">
         <a href="people.html">People</a>
         <a href="cars.html">Cars</a>
-        <a href="product.html">Product</a>
-        <a href="street.html">Street</a>
         <a href="architecture.html">Architecture</a>
         <a href="concert.html">Concert</a>
       </div>
@@ -46,26 +39,104 @@
     <li><a href="contact.html">Contact</a></li>
   </ul>
 </nav>
-<div class="hero">
-  <div class="hero-text">
-    <span class="hero-eyebrow">Photography &amp; Visual Stories</span>
-    <h1 class="hero-title">Stel<br><em>Eastwood</em></h1>
-    <p class="hero-desc">Light, texture, and the moments between — captured with intention.</p>
-    <div class="hero-actions">
-      <a href="portfolio.html" class="btn-dark">View Portfolio</a>
-      <a href="contact.html" class="btn-outline">Work Together</a>
+
+<!-- ── HERO: full-bleed image, overlay text ── -->
+<div class="home-hero">
+  <img src="Images/hero.jpg" alt="Hero">
+  <div class="home-hero-scrim"></div>
+  <div class="home-hero-content">
+    <span class="home-hero-eyebrow">Melbourne, Australia</span>
+    <h1 class="home-hero-title">Show Me<br><em>an Image</em></h1>
+    <p class="home-hero-desc"></p>
+    <div class="home-hero-actions">
+      <a href="portfolio.html" class="btn-light">View Portfolio</a>
+      <a href="contact.html" class="btn-outline-light">Work Together</a>
     </div>
-    
-  </div>
-  <div class="hero-image">
-    <!-- HERO IMAGE: replace src with your photo -->
-    <img src="/Images/People/people (26).jpg" alt="Hero">
-    
   </div>
 </div>
+
+<div class="page-wrapper">
+
+  <!-- ── ABOUT: floating overlapping portrait card ── -->
+  <div class="home-about">
+    <div class="home-about-image skel">
+      <img src="Images/About/portrait.jpg" alt="Portrait of STEL"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="home-about-image-placeholder" style="display:none;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#B0A898" stroke-width="0.8">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+        <span>Images/About/portrait.jpg</span>
+      </div>
+    </div>
+    <div class="home-about-content">
+      <span class="page-eyebrow">The Photographer</span>
+      <h2 class="home-about-title">Behind <em>the Lens</em></h2>
+      <p class="home-about-text">My name is <strong>Stel</strong>, I am a Melbourne based photographer drawn to beautiful light and stories in everyday moments. My work spans people, cars, architecture, and concerts, shot on both film and digital.</p>
+      <a href="about.html" class="text-link">More about me &rarr;</a>
+    </div>
+  </div>
+
+  <!-- ── CATEGORIES: horizontal scroll-snap strip ── -->
+  <div class="home-categories">
+    <div class="home-categories-header">
+      <div>
+        <span class="page-eyebrow">My expertise</span>
+        <h2 class="home-categories-title">Assorted work<em></em></h2>
+      </div>
+      <a href="portfolio.html" class="text-link">View full portfolio &rarr;</a>
+    </div>
+    <div class="home-category-strip">
+      <a href="people.html" class="home-category-card">
+        <img src="Images/people/cover.jpg" alt="People">
+        <div class="home-category-label">
+          <div class="home-category-name">People</div>
+          <div class="home-category-sub">Portraits cherished forever.</div>
+        </div>
+      </a>
+      <a href="cars.html" class="home-category-card">
+        <img src="Images/cars/cover.jpg" alt="Cars">
+        <div class="home-category-label">
+          <div class="home-category-name">Cars</div>
+          <div class="home-category-sub">Clean images of your masterwork.</div>
+        </div>
+      </a>
+      <a href="architecture.html" class="home-category-card">
+        <img src="Images/architecture/cover.jpg" alt="Architecture">
+        <div class="home-category-label">
+          <div class="home-category-name">Architecture</div>
+          <div class="home-category-sub">Show your building like it's art.</div>
+        </div>
+      </a>
+      <a href="concert.html" class="home-category-card">
+        <img src="Images/concert/cover.jpg" alt="Concert">
+        <div class="home-category-label">
+          <div class="home-category-name">Concert</div>
+          <div class="home-category-sub">The image your sound deserves.</div>
+        </div>
+      </a>
+    </div>
+    <div class="home-category-hint">&larr; swipe to browse &rarr;</div>
+  </div>
+
+</div>
+
+<!-- ── CONTACT CTA ── -->
+<div class="home-cta">
+  <span class="home-cta-eyebrow">Get in Touch</span>
+  <h2 class="home-cta-title">Let's <em>create</em><br>together</h2>
+  <p class="home-cta-text">Available for commissions, collaborations, and editorial work. I'd love to hear about your project.</p>
+  <a href="contact.html" class="btn-light">Work Together</a>
+</div>
+
 <footer>
   <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
+  <div class="footer-links">
+    <a href="privacy.html" class="footer-link">Privacy Policy</a>
+  </div>
   <span class="footer-logo">Showmeanimage</span>
 </footer>
+<script src="skeleton-loader.js" defer></script>
 </body>
 </html>

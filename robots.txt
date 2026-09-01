@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://showmeanimage.com/sitemap.xml

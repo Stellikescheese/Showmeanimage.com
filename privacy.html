@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy — ShowMeAnImage</title>
+  <meta name="description" content="Privacy policy for showmeanimage.com.">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    function toggleNav() {
+      const l = document.querySelector('.nav-links');
+      const btn = document.querySelector('.nav-toggle');
+      const open = l.getAttribute('data-open') === 'true';
+      l.setAttribute('data-open', open ? 'false' : 'true');
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+    }
+  </script>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">ShowMeAnImage</a>
+  <button class="nav-toggle" onclick="toggleNav()" aria-expanded="false" aria-label="Menu">
+    <span class="nav-toggle-line"></span>
+    <span class="nav-toggle-line"></span>
+    <span class="nav-toggle-line"></span>
+  </button>
+  <ul class="nav-links" data-open="false">
+    <li class="dropdown">
+      <a href="portfolio.html">Portfolio<span class="nav-caret" aria-hidden="true"> ▼</span></a>
+      <div class="dropdown-content">
+        <a href="people.html">People</a>
+        <a href="cars.html">Cars</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="concert.html">Concert</a>
+      </div>
+    </li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="page-header-left">
+      <span class="page-eyebrow"></span>
+      <h1 class="page-title">Privacy <em>Policy</em></h1>
+    </div>
+  </div>
+
+  <div class="legal-content">
+    <p class="legal-updated">Last updated: 25/08/2026</p>
+
+    <p>This Privacy Policy explains how ShowMeAnImage ("we", "us", "our") collects, uses, and protects information when you visit showmeanimage.com (the "Site"). This policy is written with reference to the Australian Privacy Principles (APPs) as a matter of best practice.</p>
+
+    <h2>Information we collect</h2>
+    <p>We only collect information you choose to give us. When you use the contact form on this Site, we collect:</p>
+    <ul>
+      <li>Your name</li>
+      <li>Your email address</li>
+      <li>Your project type (if selected)</li>
+      <li>The message you send us</li>
+    </ul>
+    <p>We do not collect any data through cookies on this site. Our hosting provider, Cloudflare, may automatically process limited technical information (such as IP address and browser type) for security and performance purposes as part of delivering the Site — this is standard for any website and is governed by <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's own privacy policy</a>.</p>
+
+    <h2>How we use your information</h2>
+    <p>Information submitted through the contact form is used solely to respond to your enquiry. We do not sell, rent, or share your information with third parties for marketing purposes.</p>
+
+    <h2>How your information is handled</h2>
+    <p>When you submit the contact form, your details are sent directly to our email inbox via the Gmail API. We do not store submissions in a separate database, they exist only as an email in our inbox, which we manage in line with our own security practices.</p>
+
+    <h2>Cookies</h2>
+    <p>This Site does not set cookies for tracking or advertising purposes. Some functional or security-related cookies may be set automatically by Cloudflare, our hosting and security provider, to help protect the Site from malicious traffic.</p>
+
+    <h2>Data retention</h2>
+    <p>We retain contact form enquiries for as long as reasonably necessary to respond to you and maintain a record of correspondence.</p>
+
+    <h2>Your rights</h2>
+    <p>You may request access to, correction of, or deletion of any personal information you've provided to us by contacting us using the details below.</p>
+
+    <h2>Children's privacy</h2>
+    <p>This Site is not directed at children, and we do not knowingly collect personal information from children.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated revision date.</p>
+
+    <h2>Contact us</h2>
+    <p>If you have questions about our Privacy Policy or how your information is handled, contact us at <a href="mailto:mail@showmeanimage.com">mail@showmeanimage.com</a>.</p>
+  </div>
+
+  </div>
+
+<footer>
+    <span class="footer-copy">&copy; 2026 Showmeanimage. All rights reserved.</span>
+    <div class="footer-links">
+      <a href="privacy.html" class="footer-link">Privacy Policy</a>
+    </div>
+    <span class="footer-logo">Showmeanimage</span>
+  </footer>
+
+<script src="skeleton-loader.js" defer></script>
+</body>
+</html>
