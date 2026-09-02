@@ -145,6 +145,24 @@ function renderJustifiedGallery(gallery, orderedItems, category) {
  *   omitted to just use natural numeric order (1, 2, 3...).
  */
 async function initCategoryPage(category, options = {}) {
+
+  // ── Load saved curation and merge with inline options ──────────────────────
+  // curation.json (written by the upload tool) takes priority.
+  // The inline carousel/order arrays in the HTML act as fallback defaults.
+  try {
+    const curRes = await fetch('/Images/curation.json');
+    if (curRes.ok) {
+      const curation = await curRes.json();
+      if (curation[category]) {
+        options = { ...options, ...curation[category] };
+      }
+    }
+  } catch (_) {
+    // File doesn't exist yet or failed to load — use inline options as-is
+  }
+  // ──────────────────────────────────────────────────────────────────────────
+
+  
   const { carousel: carouselOrder = [], order: galleryOrderInput = [] } = options;
 
   const gallery = document.getElementById('gallery');
