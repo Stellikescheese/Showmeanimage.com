@@ -8,5 +8,5 @@
  * → your worker → the URL shown at the top (ends in .workers.dev)
  */
 const SMAI_CONFIG = {
-  workerUrl: "https://YOUR_WORKER_NAME.YOUR_SUBDOMAIN.workers.dev",
+  workerUrl: "https://portfolio-wall-upload.showmeanimage.workers.dev",
 };
