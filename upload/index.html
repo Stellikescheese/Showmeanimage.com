@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Wall — Upload</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:            #17140f;
+  --surface:       #211c16;
+  --surface-raised:#2a241c;
+  --hairline:      #3c352a;
+  --text:          #f1e9d8;
+  --text-muted:    #a89a82;
+  --text-faint:    #6b6051;
+  --accent:        #e2762f;
+  --accent-dim:    #8a4a22;
+  --danger:        #c4543a;
+  --success:       #4caf77;
+  --font-display:  "Fraunces", Georgia, serif;
+  --font-body:     "Inter", -apple-system, sans-serif;
+  --font-mono:     "JetBrains Mono", monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+button { font-family: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.page { max-width: 920px; margin: 0 auto; padding: clamp(24px,5vw,60px) clamp(16px,4vw,40px) 80px; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── Login ── */
+.login-wrap { display: flex; align-items: center; justify-content: center; min-height: 80vh; }
+.login-card {
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 6px;
+  padding: 40px 36px; width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 18px;
+}
+.eyebrow { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; color: var(--accent); }
+.login-card h2 { font-family: var(--font-display); font-size: 26px; font-weight: 500; }
+.login-card p  { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
+.login-error   { font-family: var(--font-mono); font-size: 12px; color: var(--danger); min-height: 16px; }
+.field label { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 7px; }
+.field input { width: 100%; background: var(--bg); border: 1px solid var(--hairline); border-radius: 4px; color: var(--text); font-family: var(--font-body); font-size: 15px; padding: 11px 14px; outline: none; transition: border-color .12s; }
+.field input:focus { border-color: var(--accent); }
+.field input.error { border-color: var(--danger); }
+
+/* ── Buttons ── */
+.btn { font-size: 14px; font-weight: 500; padding: 11px 22px; border-radius: 4px; border: 1px solid transparent; transition: background .12s, border-color .12s, color .12s; }
+.btn--accent { background: var(--accent); color: #fff; }
+.btn--accent:hover { background: #c9621e; }
+.btn--accent:disabled { background: var(--accent-dim); cursor: not-allowed; opacity: .7; }
+.btn--full { width: 100%; text-align: center; }
+.btn--ghost { background: none; border-color: var(--hairline); color: var(--text-muted); }
+.btn--ghost:hover { border-color: var(--text-muted); color: var(--text); }
+.btn--danger { background: none; border-color: var(--danger); color: var(--danger); font-size: 12px; padding: 6px 12px; }
+.btn--danger:hover { background: var(--danger); color: #fff; }
+.link-btn { background: none; border: none; color: var(--accent); font-size: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--accent-dim); }
+.link-btn:hover { text-decoration-color: var(--accent); }
+
+/* ── Topbar ── */
+.topbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--hairline); margin-bottom: 28px; }
+.topbar h1 { font-family: var(--font-display); font-size: clamp(26px,4vw,40px); font-weight: 500; letter-spacing: -0.01em; }
+.topbar__right { display: flex; align-items: center; gap: 10px; }
+.logout-btn { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text-faint); background: none; border: 1px solid var(--hairline); padding: 6px 14px; border-radius: 3px; transition: color .12s, border-color .12s; }
+.logout-btn:hover { color: var(--text-muted); border-color: var(--text-muted); }
+
+/* ── Mode switcher ── */
+.mode-switch { display: flex; gap: 2px; background: var(--surface); border: 1px solid var(--hairline); border-radius: 4px; padding: 3px; }
+.mode-btn { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; padding: 6px 14px; border-radius: 3px; border: none; background: none; color: var(--text-muted); transition: background .12s, color .12s; }
+.mode-btn.active { background: var(--surface-raised); color: var(--text); }
+
+/* ── Dropzone ── */
+.dropzone { border: 1.5px dashed var(--hairline); border-radius: 4px; background: var(--surface); padding: 44px 24px; text-align: center; transition: border-color .15s, background .15s; margin-bottom: 28px; }
+.dropzone.dragover { border-color: var(--accent); background: var(--surface-raised); }
+.dropzone__icon { color: var(--text-faint); margin-bottom: 14px; }
+.dropzone.dragover .dropzone__icon { color: var(--accent); }
+.dropzone__title { font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: 6px; }
+.dropzone__sub { font-size: 13px; color: var(--text-muted); }
+
+/* ── Category tabs ── */
+.cat-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 20px; }
+.cat-tab { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; padding: 7px 14px; border-radius: 3px; border: 1px solid transparent; color: var(--text-muted); background: none; display: flex; align-items: center; gap: 6px; transition: color .12s, border-color .12s, background .12s; }
+.cat-tab:hover { color: var(--text); border-color: var(--hairline); }
+.cat-tab.active { color: var(--accent); border-color: var(--accent-dim); background: rgba(226,118,47,.07); }
+.cat-tab--series .series-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.cat-tab--new { color: var(--accent); }
+.cat-tab--new:hover { border-color: var(--accent-dim); background: rgba(226,118,47,.07); }
+
+/* ── Upload queue ── */
+.queue { display: flex; flex-direction: column; gap: 3px; }
+.queue-item { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--hairline); border-radius: 3px; padding: 10px 14px; }
+.queue-item__thumb { width: 42px; height: 42px; object-fit: cover; border-radius: 2px; flex-shrink: 0; }
+.queue-item__info { flex: 1; overflow: hidden; }
+.queue-item__name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); font-size: 13px; }
+.queue-item__meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+.queue-item__status { font-family: var(--font-mono); font-size: 12px; flex-shrink: 0; }
+.queue-item__status.pending   { color: var(--text-faint); }
+.queue-item__status.uploading { color: var(--accent); }
+.queue-item__status.done      { color: var(--success); }
+.queue-item__status.error     { color: var(--danger); }
+.queue-item__remove { background: none; border: none; color: var(--text-faint); font-size: 18px; line-height: 1; padding: 0 4px; transition: color .12s; }
+.queue-item__remove:hover { color: var(--danger); }
+.upload-bar { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
+.upload-bar .upload-summary { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); flex: 1; }
+
+/* ── Series section (upload mode) ── */
+.series-section { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--hairline); }
+.section-heading { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.section-heading h3 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
+.section-heading__rule { flex: 1; height: 1px; background: var(--hairline); }
+.series-list { display: flex; flex-direction: column; gap: 6px; }
+.series-row { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--hairline); border-radius: 3px; padding: 10px 14px; }
+.series-pip-lg { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.series-row__name { flex: 1; font-size: 14px; }
+.series-row__keywords { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+.series-empty-note { font-size: 13px; color: var(--text-faint); padding: 12px 0; }
+
+/* ── Gallery ── */
+.gallery-status { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); padding: 40px 0; text-align: center; }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 3px; }
+.gallery-frame { position: relative; aspect-ratio: 1/1; overflow: hidden; background: var(--surface); }
+.gallery-frame img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s ease; }
+.gallery-frame:hover img { transform: scale(1.04); }
+.gallery-frame__delete {
+  position: absolute; top: 6px; right: 6px;
+  width: 28px; height: 28px;
+  background: rgba(196,84,58,0.85);
+  border: none; border-radius: 3px;
+  color: #fff; font-size: 16px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .12s;
+  z-index: 2;
+}
+.gallery-frame:hover .gallery-frame__delete,
+.gallery-frame__delete:focus-visible { opacity: 1; }
+@media (hover: none) { .gallery-frame__delete { opacity: 1; } }
+.gallery-frame__name {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 6px 8px;
+  background: linear-gradient(transparent, rgba(15,12,8,.75));
+  font-family: var(--font-mono); font-size: 10px; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  opacity: 0; transition: opacity .12s;
+}
+.gallery-frame:hover .gallery-frame__name { opacity: 1; }
+.gallery-empty { padding: 60px 0; text-align: center; }
+.gallery-empty p { font-family: var(--font-display); font-size: 18px; color: var(--text-muted); margin-bottom: 6px; }
+.gallery-empty small { font-size: 13px; color: var(--text-faint); }
+.gallery-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin-bottom: 16px; }
+
+/* ── Modal ── */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(10,9,7,.88); display: flex; align-items: center; justify-content: center; z-index: 60; padding: 20px; }
+.modal-backdrop[hidden] { display: none; }
+.modal { background: var(--surface-raised); border: 1px solid var(--hairline); border-radius: 6px; padding: 32px; width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 14px; }
+.modal h2 { font-family: var(--font-display); font-size: 22px; font-weight: 500; }
+.modal p  { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
+.modal__hint { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); min-height: 16px; }
+.modal__hint.ok    { color: var(--accent); }
+.modal__hint.error { color: var(--danger); }
+.modal__actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .dropzone { padding: 32px 16px; }
+  .cat-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+  .cat-tabs::-webkit-scrollbar { display: none; }
+  .cat-tab { flex-shrink: 0; }
+  .upload-bar { flex-wrap: wrap; }
+  .upload-bar .btn { width: 100%; }
+  .modal { padding: 24px 18px; }
+  .modal__actions { flex-direction: column-reverse; }
+  .modal__actions .btn { width: 100%; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .topbar { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Login ── -->
+<div class="screen active" id="screen-login">
+  <div class="login-wrap">
+    <div class="login-card">
+      <span class="eyebrow">PORTFOLIO WALL</span>
+      <h2>Sign in</h2>
+      <p>Enter your upload password to access the portfolio manager.</p>
+      <form id="login-form" autocomplete="on">
+        <input type="text" name="username" value="showmeanimage.com/upload" autocomplete="username" style="display:none" aria-hidden="true">
+        <div class="field">
+          <label for="password-input">Password</label>
+          <input type="password" id="password-input" name="password" autocomplete="current-password" placeholder="••••••••••••">
+        </div>
+        <p class="login-error" id="login-error" aria-live="polite"></p>
+        <button type="submit" class="btn btn--accent btn--full" id="login-btn">Sign in</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ── Main app ── -->
+<div class="screen" id="screen-app">
+  <div class="page">
+
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">PORTFOLIO WALL</span>
+        <h1 id="page-title">Upload</h1>
+      </div>
+      <div class="topbar__right">
+        <div class="mode-switch">
+          <button class="mode-btn active" id="mode-upload">Upload</button>
+          <button class="mode-btn" id="mode-gallery">Gallery</button>
+        </div>
+        <button class="logout-btn" id="logout-btn">Sign out</button>
+      </div>
+    </header>
+
+    <!-- ══ UPLOAD MODE ══ -->
+    <div id="upload-mode">
+
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="file-input" multiple accept="image/png,image/jpeg,image/gif,image/webp,image/bmp,image/tiff" hidden>
+        <svg class="dropzone__icon" width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <path d="M18 4V22M18 4L11 11M18 4L25 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5 24V27.5C5 28.88 6.12 30 7.5 30H28.5C29.88 30 31 28.88 31 27.5V24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <p class="dropzone__title">Drop images here to queue them</p>
+        <p class="dropzone__sub">or <button type="button" class="link-btn" id="browse-btn">browse files</button> — JPG, PNG, GIF, WEBP, BMP, TIFF</p>
+      </div>
+
+      <div class="cat-tabs" id="upload-cat-tabs"></div>
+      <div class="queue" id="queue"></div>
+      <div class="upload-bar" id="upload-bar" style="display:none">
+        <span class="upload-summary" id="upload-summary"></span>
+        <button class="btn btn--ghost" id="clear-btn">Clear</button>
+        <button class="btn btn--accent" id="upload-btn">Upload all</button>
+      </div>
+
+      <div class="series-section">
+        <div class="section-heading">
+          <h3>Series</h3>
+          <div class="section-heading__rule"></div>
+          <button class="cat-tab cat-tab--new" id="new-series-btn">+ New Series</button>
+        </div>
+        <div class="series-list" id="series-list"></div>
+      </div>
+
+    </div>
+
+    <!-- ══ GALLERY MODE ══ -->
+    <div id="gallery-mode" style="display:none">
+
+      <div class="cat-tabs" id="gallery-cat-tabs"></div>
+
+      <!-- Manage / Curate sub-tabs -->
+      <div class="gallery-sub-tabs">
+        <button class="gallery-sub-tab active" id="sub-manage">Manage</button>
+        <button class="gallery-sub-tab" id="sub-curate">Curate</button>
+      </div>
+
+      <!-- Manage view (existing) -->
+      <div id="manage-view">
+        <p class="gallery-count" id="gallery-count"></p>
+        <div id="gallery-content">
+          <p class="gallery-status">Loading…</p>
+        </div>
+      </div>
+
+      <!-- Curate view (new) -->
+      <div id="curate-view" style="display:none">
+
+        <div class="curate-section">
+          <p class="curate-section-title">Gallery Order</p>
+          <p class="curate-section-desc">Click an image to select it (orange), then click another to swap their positions. The numbers show the display order on the portfolio page.</p>
+          <div class="curate-grid" id="curate-grid"></div>
+        </div>
+
+        <div class="curate-section">
+          <p class="curate-section-title">Carousel</p>
+          <p class="curate-section-desc">Click ◉ on any image to add it to the hero carousel. Drag the strip below to reorder them.</p>
+          <div class="carousel-strip" id="carousel-strip"></div>
+          <div class="curate-grid" id="curate-all-grid" style="display:none"></div>
+        </div>
+
+        <div class="curate-actions">
+          <button class="btn btn--accent" id="save-curation-btn">Save curation</button>
+          <span class="curate-save-status" id="curate-save-status"></span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Series modal ── -->
+<div class="modal-backdrop" id="modal-backdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <h2>New Series</h2>
+    <p>Give your series a name. Images whose filenames contain that name will be sorted into this folder automatically.</p>
+    <div class="field">
+      <label for="series-input">Series name</label>
+      <input type="text" id="series-input" placeholder="e.g. Tokyo 2024" maxlength="60" autocomplete="off">
+    </div>
+    <p class="modal__hint" id="modal-hint"></p>
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="modal-cancel">Cancel</button>
+      <button class="btn btn--accent" id="modal-confirm">Create</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Config ───────────────────────────────────────────────────────────────────
+const WORKER_URL = "https://YOUR_WORKER_NAME.YOUR_SUBDOMAIN.workers.dev";
+
+const CATEGORIES = [
+  { name: "Architecture", keywords: ["architecture","arch","building","buildings"] },
+  { name: "Cars",         keywords: ["cars","car","auto","vehicle","automotive"] },
+  { name: "Concert",      keywords: ["concert","gig","live","show","stage","band"] },
+  { name: "People",       keywords: ["people","person","portrait","face","model"] },
+  { name: "Product",      keywords: ["product","studio","commercial","item"] },
+  { name: "Street",       keywords: ["street","urban","city","roads","alley"] },
+];
+const UNCATEGORISED = "Uncategorised";
+const MAX_DIMENSION = 2400;
+const JPEG_QUALITY  = 0.85;
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let password       = "";
+let series         = [];
+let queue          = [];
+let nextId         = 0;
+let currentMode    = "upload";
+let galleryCategory= null;   // currently viewed gallery category
+let galleryCache   = {};     // { categoryName: [filenames] }
+
+// ── Elements ──────────────────────────────────────────────────────────────────
+const loginForm     = document.getElementById("login-form");
+const loginError    = document.getElementById("login-error");
+const loginBtn      = document.getElementById("login-btn");
+const passwordIn    = document.getElementById("password-input");
+const logoutBtn     = document.getElementById("logout-btn");
+const modeUploadBtn = document.getElementById("mode-upload");
+const modeGalleryBtn= document.getElementById("mode-gallery");
+const uploadMode    = document.getElementById("upload-mode");
+const galleryMode   = document.getElementById("gallery-mode");
+const pageTitle     = document.getElementById("page-title");
+const dropzone      = document.getElementById("dropzone");
+const fileInput     = document.getElementById("file-input");
+const browseBtn     = document.getElementById("browse-btn");
+const uploadCatTabs = document.getElementById("upload-cat-tabs");
+const galleryCatTabs= document.getElementById("gallery-cat-tabs");
+const queueEl       = document.getElementById("queue");
+const uploadBar     = document.getElementById("upload-bar");
+const uploadSumEl   = document.getElementById("upload-summary");
+const clearBtn      = document.getElementById("clear-btn");
+const uploadBtn     = document.getElementById("upload-btn");
+const seriesListEl  = document.getElementById("series-list");
+const newSeriesBtn  = document.getElementById("new-series-btn");
+const modalBackdrop = document.getElementById("modal-backdrop");
+const modalCancel   = document.getElementById("modal-cancel");
+const modalConfirm  = document.getElementById("modal-confirm");
+const seriesInput   = document.getElementById("series-input");
+const modalHint     = document.getElementById("modal-hint");
+const galleryContent= document.getElementById("gallery-content");
+const galleryCount  = document.getElementById("gallery-count");
+
+// ── API ───────────────────────────────────────────────────────────────────────
+async function api(method, path, body) {
+  const res = await fetch(WORKER_URL + path, {
+    method,
+    headers: { "Content-Type": "application/json", "X-App-Password": password },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  return res.json();
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === id));
+}
+
+loginForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const pw = passwordIn.value;
+  if (!pw) return;
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Signing in…";
+  loginError.textContent = "";
+  password = pw;
+  const res = await api("POST", "/api/auth").catch(() => ({ ok: false, error: "Could not reach the server." }));
+  if (res.ok) {
+    sessionStorage.setItem("pw", pw);
+    await init();
+    showScreen("screen-app");
+  } else {
+    loginError.textContent = res.error || "Incorrect password.";
+    passwordIn.classList.add("error");
+    password = "";
+  }
+  loginBtn.disabled = false;
+  loginBtn.textContent = "Sign in";
+});
+
+passwordIn.addEventListener("input", () => passwordIn.classList.remove("error"));
+
+logoutBtn.addEventListener("click", () => {
+  password = ""; sessionStorage.removeItem("pw");
+  passwordIn.value = ""; queue = []; galleryCache = {};
+  renderQueue();
+  showScreen("screen-login");
+});
+
+(async () => {
+  const saved = sessionStorage.getItem("pw");
+  if (!saved) return;
+  password = saved;
+  const res = await api("POST", "/api/auth").catch(() => ({ ok: false }));
+  if (res.ok) { await init(); showScreen("screen-app"); }
+  else { sessionStorage.removeItem("pw"); password = ""; }
+})();
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  await loadSeries();
+  buildUploadCatTabs();
+  buildGalleryCatTabs();
+}
+
+// ── Mode switch ───────────────────────────────────────────────────────────────
+modeUploadBtn.addEventListener("click",  () => switchMode("upload"));
+modeGalleryBtn.addEventListener("click", () => switchMode("gallery"));
+
+function switchMode(mode) {
+  currentMode = mode;
+  modeUploadBtn.classList.toggle("active",  mode === "upload");
+  modeGalleryBtn.classList.toggle("active", mode === "gallery");
+  uploadMode.style.display  = mode === "upload"  ? "block" : "none";
+  galleryMode.style.display = mode === "gallery" ? "block" : "none";
+  pageTitle.textContent     = mode === "upload"  ? "Upload" : "Gallery";
+  if (mode === "gallery") loadGalleryForCurrentCategory();
+}
+
+// ── Upload category tabs ──────────────────────────────────────────────────────
+let activeUploadCategory = null;
+
+function buildUploadCatTabs() {
+  uploadCatTabs.innerHTML = "";
+  appendTab(uploadCatTabs, "Auto-detect", null, true, false, () => { activeUploadCategory = null; reResolveQueue(); });
+  CATEGORIES.forEach(cat => appendTab(uploadCatTabs, cat.name, cat.name, false, false, () => { activeUploadCategory = cat.name; reResolveQueue(); }));
+  series.forEach(s   => appendTab(uploadCatTabs, s.name, s.name, false, true, () => { activeUploadCategory = s.name; reResolveQueue(); }));
+}
+
+function appendTab(container, label, value, isActive, isSeries, onClick) {
+  const btn = document.createElement("button");
+  btn.className = "cat-tab" + (isSeries ? " cat-tab--series" : "") + (isActive ? " active" : "");
+  if (isSeries) { const pip = document.createElement("span"); pip.className = "series-pip"; btn.appendChild(pip); }
+  btn.appendChild(document.createTextNode(label));
+  btn.addEventListener("click", () => {
+    container.querySelectorAll(".cat-tab").forEach(t => t.classList.remove("active"));
+    btn.classList.add("active");
+    onClick();
+  });
+  container.appendChild(btn);
+}
+
+function reResolveQueue() {
+  queue.forEach(item => {
+    if (item.status === "pending") item.category = activeUploadCategory ?? autoCategory(item.name);
+  });
+  renderQueue();
+}
+
+// ── Gallery category tabs ─────────────────────────────────────────────────────
+function buildGalleryCatTabs() {
+  galleryCatTabs.innerHTML = "";
+  const allCats = [...CATEGORIES.map(c => c.name), ...series.map(s => s.name)];
+  if (allCats.length === 0) return;
+
+  // Default to first category
+  if (!galleryCategory) galleryCategory = allCats[0];
+
+  allCats.forEach((name, i) => {
+    const isSeries = series.some(s => s.name === name);
+    appendTab(galleryCatTabs, name, name, i === 0 && name === galleryCategory, isSeries, () => {
+      galleryCategory = name;
+      loadGalleryForCurrentCategory();
+    });
+  });
+}
+
+// ── Auto-category ─────────────────────────────────────────────────────────────
+function autoCategory(filename) {
+  const stem   = filename.replace(/\.[^.]+$/, "").toLowerCase();
+  const tokens = new Set(stem.split(/[^a-z0-9]+/).filter(Boolean));
+  for (const s of series) {
+    for (const kw of s.keywords) {
+      if ([...new Set(kw.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean))].every(t => tokens.has(t)) || stem.includes(kw.toLowerCase())) return s.name;
+    }
+  }
+  for (const cat of CATEGORIES) {
+    for (const kw of cat.keywords) {
+      if ([...new Set(kw.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean))].every(t => tokens.has(t)) || stem.includes(kw.toLowerCase())) return cat.name;
+    }
+  }
+  return UNCATEGORISED;
+}
+
+// ── Dropzone / file picking ───────────────────────────────────────────────────
+browseBtn.addEventListener("click", () => fileInput.click());
+dropzone.addEventListener("click", e => { if (e.target !== browseBtn) fileInput.click(); });
+fileInput.addEventListener("change", () => addFiles(fileInput.files));
+["dragenter","dragover"].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add("dragover"); }));
+["dragleave","drop"].forEach(ev => dropzone.addEventListener(ev, e => {
+  e.preventDefault(); dropzone.classList.remove("dragover");
+  if (ev === "drop") addFiles(e.dataTransfer.files);
+}));
+
+function addFiles(fileList) {
+  for (const file of fileList) {
+    if (!file.type.startsWith("image/")) continue;
+    queue.push({ id: nextId++, file, name: file.name, category: activeUploadCategory ?? autoCategory(file.name), status: "pending", error: null, objectUrl: URL.createObjectURL(file) });
+  }
+  renderQueue();
+}
+
+// ── Queue render ──────────────────────────────────────────────────────────────
+function renderQueue() {
+  queueEl.innerHTML = "";
+  if (!queue.length) { uploadBar.style.display = "none"; return; }
+  queue.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "queue-item";
+    const img = document.createElement("img");
+    img.className = "queue-item__thumb"; img.src = item.objectUrl; img.alt = item.name;
+    const info = document.createElement("div"); info.className = "queue-item__info";
+    const nameEl = document.createElement("div"); nameEl.className = "queue-item__name"; nameEl.textContent = item.name;
+    const metaEl = document.createElement("div"); metaEl.className = "queue-item__meta"; metaEl.textContent = item.category;
+    info.append(nameEl, metaEl);
+    const st = document.createElement("span");
+    st.className = `queue-item__status ${item.status}`;
+    st.textContent = item.status === "pending" ? "Queued" : item.status === "uploading" ? "Uploading…" : item.status === "done" ? "✓ Done" : `✗ ${item.error || "Failed"}`;
+    div.append(img, info, st);
+    if (item.status === "pending") {
+      const rm = document.createElement("button"); rm.className = "queue-item__remove"; rm.textContent = "×";
+      rm.addEventListener("click", () => { queue = queue.filter(q => q.id !== item.id); renderQueue(); });
+      div.appendChild(rm);
+    }
+    queueEl.appendChild(div);
+  });
+  const pending = queue.filter(q => q.status === "pending").length;
+  uploadSumEl.textContent = `${pending} image${pending === 1 ? "" : "s"} ready to upload`;
+  uploadBar.style.display = "flex";
+  uploadBtn.disabled = pending === 0;
+}
+
+// ── Compress ──────────────────────────────────────────────────────────────────
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onerror = () => reject(new Error("Could not read image file."));
+    img.onload  = () => {
+      let { width: w, height: h } = img;
+      if (Math.max(w, h) > MAX_DIMENSION) { const s = MAX_DIMENSION / Math.max(w, h); w = Math.floor(w * s); h = Math.floor(h * s); }
+      const canvas = document.createElement("canvas"); canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => {
+        if (!blob) { reject(new Error("Compression failed.")); return; }
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.readAsDataURL(blob);
+      }, "image/jpeg", JPEG_QUALITY);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// ── Upload ────────────────────────────────────────────────────────────────────
+clearBtn.addEventListener("click",  () => { queue = []; renderQueue(); });
+uploadBtn.addEventListener("click", async () => {
+  uploadBtn.disabled = clearBtn.disabled = true;
+  for (const item of queue.filter(q => q.status === "pending")) {
+    item.status = "uploading"; renderQueue();
+    try {
+      const base64 = await compressImage(item.file);
+      const res    = await api("POST", "/api/upload", { filename: item.name, content: base64, category: item.category });
+      item.status  = res.ok ? "done" : "error";
+      item.error   = res.ok ? null : (res.error || "Upload failed.");
+      if (res.ok) galleryCache = {}; // invalidate cache so gallery refreshes
+    } catch (err) { item.status = "error"; item.error = err.message || "Upload failed."; }
+    renderQueue();
+  }
+  uploadBtn.disabled = clearBtn.disabled = false;
+});
+
+// ── Gallery sub-tabs (Manage / Curate) ────────────────────────────────────────
+const subManageBtn = document.getElementById("sub-manage");
+const subCurateBtn = document.getElementById("sub-curate");
+const manageView   = document.getElementById("manage-view");
+const curateView   = document.getElementById("curate-view");
+
+subManageBtn.addEventListener("click", () => {
+  subManageBtn.classList.add("active"); subCurateBtn.classList.remove("active");
+  manageView.style.display = "block"; curateView.style.display = "none";
+});
+
+subCurateBtn.addEventListener("click", () => {
+  subCurateBtn.classList.add("active"); subManageBtn.classList.remove("active");
+  curateView.style.display = "block"; manageView.style.display = "none";
+  if (galleryCategory) loadCurateMode(galleryCategory);
+});
+
+// ── Curate state ───────────────────────────────────────────────────────────────
+let curateNums        = [];   // image numbers in current gallery order
+let carouselNums      = [];   // image numbers in carousel, in order
+let selectedCurateIdx = null; // index in curateNums currently selected for swap
+let carouselDragSrc   = null; // index in carouselNums being dragged
+
+async function loadCurateMode(category) {
+  const curateGrid = document.getElementById("curate-grid");
+  const stripEl    = document.getElementById("carousel-strip");
+  curateGrid.innerHTML = '<p class="gallery-status" style="grid-column:1/-1;padding:30px 0">Loading…</p>';
+  stripEl.innerHTML    = "";
+  document.getElementById("curate-save-status").textContent = "";
+
+  // Get available images
+  const imagesRes = await api("GET", `/api/images/${encodeURIComponent(category)}`).catch(() => ({ ok: false }));
+  if (!imagesRes.ok) { curateGrid.innerHTML = '<p class="gallery-status" style="grid-column:1/-1">Could not load images.</p>'; return; }
+
+  // Extract sequential numbers from filenames (e.g. "Cars (3).jpg" → 3)
+  const allNums = imagesRes.images
+    .map(name => { const m = name.match(/\((\d+)\)\.jpg$/i); return m ? parseInt(m[1]) : null; })
+    .filter(n => n !== null)
+    .sort((a, b) => a - b);
+
+  if (!allNums.length) {
+    curateGrid.innerHTML = '<p class="gallery-status" style="grid-column:1/-1;padding:30px 0">No numbered images yet. Uploaded images appear here automatically.</p>';
+    return;
+  }
+
+  // Load saved curation for this category
+  const curRes     = await api("GET", "/api/curation").catch(() => ({ ok: false }));
+  const saved      = (curRes.ok && curRes.curation[category]) ? curRes.curation[category] : {};
+  const savedOrder = (saved.order     || []).filter(n => allNums.includes(n));
+  const notInOrder = allNums.filter(n => !savedOrder.includes(n));
+  curateNums       = [...savedOrder, ...notInOrder];
+
+  const savedCarousel = (saved.carousel || []).filter(n => allNums.includes(n));
+  carouselNums = savedCarousel.length ? savedCarousel : allNums.slice(0, Math.min(6, allNums.length));
+
+  selectedCurateIdx = null;
+  renderCurateGrid(category);
+  renderCarouselStrip(category);
+}
+
+function renderCurateGrid(category) {
+  const cat   = category || galleryCategory;
+  const grid  = document.getElementById("curate-grid");
+  grid.innerHTML = "";
+
+  curateNums.forEach((num, idx) => {
+    const cell = document.createElement("div");
+    cell.className = "curate-cell" + (selectedCurateIdx === idx ? " selected" : "");
+
+    const img = document.createElement("img");
+    img.src     = `/Images/${cat}/${cat} (${num}).jpg`;
+    img.alt     = `${cat} ${num}`;
+    img.loading = "lazy";
+
+    const pos = document.createElement("span");
+    pos.className   = "curate-pos";
+    pos.textContent = String(idx + 1).padStart(2, "0");
+
+    const toggle = document.createElement("button");
+    toggle.className = "curate-carousel-toggle" + (carouselNums.includes(num) ? " in-carousel" : "");
+    toggle.innerHTML = "◉";
+    toggle.title     = carouselNums.includes(num) ? "Remove from carousel" : "Add to carousel";
+    toggle.addEventListener("click", e => { e.stopPropagation(); toggleCarousel(num, cat); });
+
+    cell.append(pos, img, toggle);
+    cell.addEventListener("click", () => handleCurateClick(idx, cat));
+    grid.appendChild(cell);
+  });
+}
+
+function handleCurateClick(idx, category) {
+  if (selectedCurateIdx === null) {
+    selectedCurateIdx = idx;
+  } else if (selectedCurateIdx === idx) {
+    selectedCurateIdx = null;
+  } else {
+    // Swap positions
+    [curateNums[selectedCurateIdx], curateNums[idx]] = [curateNums[idx], curateNums[selectedCurateIdx]];
+    selectedCurateIdx = null;
+  }
+  renderCurateGrid(category);
+}
+
+function toggleCarousel(num, category) {
+  if (carouselNums.includes(num)) {
+    carouselNums = carouselNums.filter(n => n !== num);
+  } else {
+    carouselNums.push(num);
+  }
+  renderCurateGrid(category);
+  renderCarouselStrip(category);
+}
+
+function renderCarouselStrip(category) {
+  const cat   = category || galleryCategory;
+  const strip = document.getElementById("carousel-strip");
+  strip.innerHTML = "";
+
+  if (!carouselNums.length) {
+    strip.innerHTML = `<span class="carousel-strip-empty">No images selected — click ◉ on images above to add them</span>`;
+    return;
+  }
+
+  carouselNums.forEach((num, idx) => {
+    const item = document.createElement("div");
+    item.className   = "co-item";
+    item.draggable   = true;
+    item.dataset.idx = idx;
+
+    const img = document.createElement("img");
+    img.src     = `/Images/${cat}/${cat} (${num}).jpg`;
+    img.alt     = `${cat} ${num}`;
+
+    const numEl = document.createElement("span");
+    numEl.className   = "co-num";
+    numEl.textContent = idx + 1;
+
+    const rm = document.createElement("button");
+    rm.className = "co-rm";
+    rm.textContent = "×";
+    rm.title = "Remove from carousel";
+    rm.addEventListener("click", e => { e.stopPropagation(); toggleCarousel(num, cat); });
+
+    item.append(img, numEl, rm);
+
+    // Drag to reorder within the carousel strip
+    item.addEventListener("dragstart", e => {
+      carouselDragSrc = idx;
+      e.dataTransfer.effectAllowed = "move";
+      setTimeout(() => item.classList.add("dragging"), 0);
+    });
+    item.addEventListener("dragend", () => {
+      item.classList.remove("dragging");
+      strip.querySelectorAll(".co-item").forEach(el => el.classList.remove("drop-here"));
+    });
+    item.addEventListener("dragover", e => {
+      e.preventDefault();
+      strip.querySelectorAll(".co-item").forEach(el => el.classList.remove("drop-here"));
+      item.classList.add("drop-here");
+    });
+    item.addEventListener("drop", e => {
+      e.preventDefault();
+      item.classList.remove("drop-here");
+      if (carouselDragSrc === null || carouselDragSrc === idx) return;
+      const [moved] = carouselNums.splice(carouselDragSrc, 1);
+      carouselNums.splice(idx, 0, moved);
+      carouselDragSrc = null;
+      renderCarouselStrip(cat);
+      renderCurateGrid(cat);
+    });
+
+    strip.appendChild(item);
+  });
+}
+
+// ── Save curation ─────────────────────────────────────────────────────────────
+document.getElementById("save-curation-btn").addEventListener("click", async () => {
+  const btn    = document.getElementById("save-curation-btn");
+  const status = document.getElementById("curate-save-status");
+  btn.disabled = true;
+  btn.textContent = "Saving…";
+  status.textContent = "";
+  status.className   = "curate-save-status";
+
+  const res = await api("POST", "/api/curation", {
+    category: galleryCategory,
+    carousel: carouselNums,
+    order:    curateNums,
+  }).catch(() => ({ ok: false, error: "Network error." }));
+
+  if (res.ok) {
+    status.textContent = "✓ Saved — site will update within ~30 seconds.";
+    status.className   = "curate-save-status ok";
+  } else {
+    status.textContent = res.error || "Save failed.";
+    status.className   = "curate-save-status error";
+  }
+
+  btn.disabled    = false;
+  btn.textContent = "Save curation";
+});
+
+// Also reload curate view when switching category while in curate sub-tab
+const _origSwitchGalleryCategory = loadGalleryForCurrentCategory;
+
+async function loadGalleryForCurrentCategory() {
+  if (!galleryCategory) return;
+
+  // If curate sub-tab is active, reload curate view too
+  if (subCurateBtn.classList.contains("active")) {
+    loadCurateMode(galleryCategory);
+  }
+  galleryContent.innerHTML = '<p class="gallery-status">Loading…</p>';
+  galleryCount.textContent = "";
+
+  // Use cache if available
+  if (galleryCache[galleryCategory]) {
+    renderGallery(galleryCache[galleryCategory], galleryCategory);
+    return;
+  }
+
+  const res = await api("GET", `/api/images/${encodeURIComponent(galleryCategory)}`).catch(() => ({ ok: false }));
+  if (!res.ok) {
+    galleryContent.innerHTML = '<p class="gallery-status">Could not load images.</p>';
+    return;
+  }
+
+  galleryCache[galleryCategory] = res.images || [];
+  renderGallery(galleryCache[galleryCategory], galleryCategory);
+}
+
+function renderGallery(images, category) {
+  galleryCount.textContent = images.length ? `${images.length} image${images.length === 1 ? "" : "s"}` : "";
+
+  if (!images.length) {
+    galleryContent.innerHTML = `
+      <div class="gallery-empty">
+        <p>No images yet.</p>
+        <small>Upload images with <strong style="color:var(--accent)">${category.toLowerCase()}</strong> in the filename and they'll appear here.</small>
+      </div>`;
+    return;
+  }
+
+  const grid = document.createElement("div");
+  grid.className = "gallery-grid";
+
+  images.forEach(filename => {
+    const frame = document.createElement("div");
+    frame.className = "gallery-frame";
+
+    const img = document.createElement("img");
+    img.src     = `/Images/${category}/${filename}`;
+    img.alt     = filename;
+    img.loading = "lazy";
+
+    const nameEl = document.createElement("span");
+    nameEl.className   = "gallery-frame__name";
+    nameEl.textContent = filename;
+
+    const delBtn = document.createElement("button");
+    delBtn.className   = "gallery-frame__delete";
+    delBtn.textContent = "×";
+    delBtn.title       = `Delete ${filename}`;
+    delBtn.setAttribute("aria-label", `Delete ${filename}`);
+    delBtn.addEventListener("click", () => confirmDelete(category, filename, frame));
+
+    frame.append(img, nameEl, delBtn);
+    grid.appendChild(frame);
+  });
+
+  galleryContent.innerHTML = "";
+  galleryContent.appendChild(grid);
+}
+
+// ── Delete from gallery ───────────────────────────────────────────────────────
+async function confirmDelete(category, filename, frameEl) {
+  if (!confirm(`Permanently delete "${filename}" from the repo?\n\nThis cannot be undone.`)) return;
+
+  const delBtn = frameEl.querySelector(".gallery-frame__delete");
+  delBtn.textContent  = "…";
+  delBtn.disabled     = true;
+
+  const res = await api("DELETE", "/api/file", { path: `Images/${category}/${filename}` });
+
+  if (res.ok) {
+    frameEl.style.transition = "opacity .2s ease";
+    frameEl.style.opacity    = "0";
+    setTimeout(() => {
+      frameEl.remove();
+      // Update cache
+      if (galleryCache[category]) {
+        galleryCache[category] = galleryCache[category].filter(f => f !== filename);
+        galleryCount.textContent = galleryCache[category].length
+          ? `${galleryCache[category].length} image${galleryCache[category].length === 1 ? "" : "s"}`
+          : "";
+      }
+    }, 220);
+  } else {
+    alert(res.error || "Could not delete the file.");
+    delBtn.textContent = "×";
+    delBtn.disabled    = false;
+  }
+}
+
+// ── Series ────────────────────────────────────────────────────────────────────
+async function loadSeries() {
+  const res = await api("GET", "/api/series").catch(() => ({ ok: false }));
+  series = res.ok ? res.series : [];
+  renderSeriesList();
+}
+
+function renderSeriesList() {
+  if (!series.length) {
+    seriesListEl.innerHTML = `<p class="series-empty-note">No series yet. Create one to organise previews of work in progress.</p>`;
+    return;
+  }
+  seriesListEl.innerHTML = "";
+  series.forEach(s => {
+    const row = document.createElement("div"); row.className = "series-row";
+    row.innerHTML = `
+      <span class="series-pip-lg"></span>
+      <div style="flex:1">
+        <div class="series-row__name">${s.name}</div>
+        <div class="series-row__keywords">matches: ${s.keywords.slice(0,4).join(", ")}</div>
+      </div>
+      <button class="btn btn--danger" data-name="${s.name}">Remove</button>`;
+    row.querySelector("[data-name]").addEventListener("click", () => deleteSeries(s.name));
+    seriesListEl.appendChild(row);
+  });
+}
+
+async function deleteSeries(name) {
+  if (!confirm(`Remove the "${name}" series?\n\nImages already in the folder won't be deleted.`)) return;
+  const res = await api("DELETE", "/api/series", { name });
+  if (res.ok) { await loadSeries(); buildUploadCatTabs(); buildGalleryCatTabs(); delete galleryCache[name]; }
+  else alert(res.error || "Could not remove series.");
+}
+
+// ── Series modal ──────────────────────────────────────────────────────────────
+newSeriesBtn.addEventListener("click", openModal);
+modalCancel.addEventListener("click",  closeModal);
+modalBackdrop.addEventListener("click", e => { if (e.target === modalBackdrop) closeModal(); });
+document.addEventListener("keydown", e => {
+  if (modalBackdrop.hidden) return;
+  if (e.key === "Escape") closeModal();
+  if (e.key === "Enter")  doCreateSeries();
+});
+seriesInput.addEventListener("input", () => {
+  const val = seriesInput.value.trim();
+  if (val) { const kws = val.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); modalHint.textContent = `Files containing "${kws.join('", "')}" will go here.`; modalHint.className = "modal__hint ok"; }
+  else { modalHint.textContent = ""; modalHint.className = "modal__hint"; }
+  seriesInput.classList.remove("error");
+});
+function openModal()  { seriesInput.value = ""; seriesInput.classList.remove("error"); modalHint.textContent = ""; modalHint.className = "modal__hint"; modalConfirm.disabled = false; modalConfirm.textContent = "Create"; modalBackdrop.hidden = false; setTimeout(() => seriesInput.focus(), 40); }
+function closeModal() { modalBackdrop.hidden = true; }
+modalConfirm.addEventListener("click", doCreateSeries);
+async function doCreateSeries() {
+  const name = seriesInput.value.trim();
+  if (!name) { seriesInput.classList.add("error"); modalHint.textContent = "Please enter a name."; modalHint.className = "modal__hint error"; return; }
+  modalConfirm.disabled = true; modalConfirm.textContent = "Creating…";
+  const res = await api("POST", "/api/series", { name });
+  if (res.ok) { await loadSeries(); buildUploadCatTabs(); buildGalleryCatTabs(); closeModal(); }
+  else { seriesInput.classList.add("error"); modalHint.textContent = res.error || "Something went wrong."; modalHint.className = "modal__hint error"; modalConfirm.disabled = false; modalConfirm.textContent = "Create"; }
+}
+</script>
+</body>
+</html>
+<!-- CURATE MODE STYLES (appended) -->
+<style>
+.gallery-sub-tabs { display: flex; gap: 2px; background: var(--surface); border: 1px solid var(--hairline); border-radius: 4px; padding: 3px; width: fit-content; margin-bottom: 20px; }
+.gallery-sub-tab { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; padding: 6px 16px; border-radius: 3px; border: none; background: none; color: var(--text-muted); cursor: pointer; transition: background .12s, color .12s; }
+.gallery-sub-tab.active { background: var(--surface-raised); color: var(--text); }
+
+/* Curate grid */
+.curate-section { margin-bottom: 36px; }
+.curate-section-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
+.curate-section-desc { font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+.curate-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 3px; }
+.curate-cell { position: relative; aspect-ratio: 1/1; background: var(--surface); overflow: hidden; cursor: pointer; user-select: none; }
+.curate-cell img { width: 100%; height: 100%; object-fit: cover; transition: transform .2s, opacity .15s; pointer-events: none; }
+.curate-cell:hover img { transform: scale(1.04); }
+.curate-cell.selected { outline: 3px solid var(--accent); outline-offset: -3px; }
+.curate-cell.selected img { opacity: 0.7; }
+.curate-cell.drop-target { outline: 3px solid var(--accent); outline-offset: -3px; background: rgba(226,118,47,.15); }
+.curate-pos { position: absolute; top: 6px; left: 6px; background: rgba(23,20,15,.82); color: var(--text); font-family: var(--font-mono); font-size: 11px; padding: 2px 7px; border-radius: 2px; z-index: 2; pointer-events: none; }
+.curate-cell.selected .curate-pos { background: var(--accent); }
+.curate-carousel-toggle { position: absolute; bottom: 6px; right: 6px; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.35); background: rgba(23,20,15,.65); color: rgba(255,255,255,.5); font-size: 15px; display: flex; align-items: center; justify-content: center; z-index: 2; cursor: pointer; transition: all .12s; }
+.curate-carousel-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.curate-carousel-toggle.in-carousel { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Carousel strip */
+.carousel-strip { display: flex; align-items: center; gap: 6px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--hairline); border-radius: 4px; min-height: 78px; overflow-x: auto; scrollbar-width: thin; margin-bottom: 14px; }
+.carousel-strip-empty { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin: auto; }
+.co-item { position: relative; flex-shrink: 0; width: 64px; height: 58px; border-radius: 2px; overflow: hidden; cursor: grab; transition: opacity .15s; }
+.co-item:active { cursor: grabbing; }
+.co-item.dragging { opacity: 0.4; }
+.co-item.drop-here { outline: 2px solid var(--accent); outline-offset: 1px; }
+.co-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.co-num { position: absolute; top: 2px; left: 3px; font-family: var(--font-mono); font-size: 9px; background: rgba(23,20,15,.82); color: var(--text); padding: 1px 4px; border-radius: 1px; pointer-events: none; }
+.co-rm { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; background: rgba(196,84,58,.9); border: none; border-radius: 1px; color: #fff; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; }
+
+/* Curate actions */
+.curate-actions { display: flex; align-items: center; gap: 14px; padding-top: 20px; border-top: 1px solid var(--hairline); margin-top: 8px; }
+.curate-save-status { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+.curate-save-status.ok    { color: var(--success); }
+.curate-save-status.error { color: var(--danger); }
+
+@media (max-width: 600px) {
+  .curate-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
