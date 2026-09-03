@@ -8,5 +8,13 @@
       1,
       2
     ]
+  },
+  "Architecture": {
+    "carousel": [
+      1
+    ],
+    "order": [
+      1
+    ]
   }
 }
