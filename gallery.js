@@ -163,7 +163,7 @@ async function initCategoryPage(category, options = {}) {
   // ──────────────────────────────────────────────────────────────────────────
 
   
-  const { carousel: carouselOrder = [], order: galleryOrderInput = [] } = options;
+  const { carousel: carouselOrder = [], order: galleryOrderInput = [], focal: focalPoints = {} } = options;
 
   const gallery = document.getElementById('gallery');
   const track   = document.getElementById('carouselTrack');
@@ -215,14 +215,21 @@ async function initCategoryPage(category, options = {}) {
     : Array.from({ length: Math.min(carouselTarget, totalCount) }, (_, i) => i + 1);
   const carouselCount = carouselNumbers.length || 1;
 
+  // Focal points are stored per image number, e.g. { "3": "20% 65%" }, and are
+  // only meaningful for images actually used in the carousel.
+  const focalStyle = (fileNum) => {
+    const pos = focalPoints[fileNum] ?? focalPoints[String(fileNum)];
+    return pos ? ` style="--focal: ${pos}"` : '';
+  };
+
   let carouselHTML = '';
   carouselNumbers.forEach((fileNum) => {
     const src = `Images/${category}/${category} (${fileNum}).jpg`;
-    carouselHTML += `<div class="carousel-slide"><img src="${src}" alt="${category} ${fileNum}"></div>`;
+    carouselHTML += `<div class="carousel-slide"><img src="${src}" alt="${category} ${fileNum}"${focalStyle(fileNum)}></div>`;
   });
   // duplicate the first slide so the loop can snap back seamlessly
   const firstCarouselNum = carouselNumbers[0] || 1;
-  carouselHTML += `<div class="carousel-slide"><img src="Images/${category}/${category} (${firstCarouselNum}).jpg" alt="${category} ${firstCarouselNum}"></div>`;
+  carouselHTML += `<div class="carousel-slide"><img src="Images/${category}/${category} (${firstCarouselNum}).jpg" alt="${category} ${firstCarouselNum}"${focalStyle(firstCarouselNum)}></div>`;
   track.style.opacity = '0';
   track.innerHTML = carouselHTML;
   requestAnimationFrame(() => {
