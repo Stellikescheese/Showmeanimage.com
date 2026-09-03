@@ -321,9 +321,32 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   </div>
 </div>
 
+<!-- ── Focal point editor modal ── -->
+<div class="modal-backdrop" id="focal-modal-backdrop" hidden>
+  <div class="modal focal-modal" role="dialog" aria-modal="true" aria-label="Adjust focal point">
+    <h2>Adjust focal point</h2>
+    <p>Click or drag on the image to set what stays centred when it's cropped to fit the hero carousel.</p>
+    <div class="focal-img-wrap" id="focal-img-wrap">
+      <img id="focal-img" alt="">
+      <div class="focal-crosshair" id="focal-crosshair"></div>
+    </div>
+    <p class="focal-coords" id="focal-coords">50%, 50%</p>
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="focal-reset">Reset to centre</button>
+      <button class="btn btn--ghost" id="focal-cancel">Cancel</button>
+      <button class="btn btn--accent" id="focal-save">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── Config ───────────────────────────────────────────────────────────────────
-const WORKER_URL = "https://portfolio-wall-upload.showmeanimage.workers.dev";
+const WORKER_URL  = "https://portfolio-wall-upload.showmeanimage.workers.dev";
+// Images live in the main site's repo (Images/), served from showmeanimage.com.
+// The uploader itself is hosted at a subdomain, so root-relative paths like
+// "/Images/..." resolve against the uploader's own host and 404 — always
+// build image URLs against the main site's origin instead.
+const SITE_ORIGIN = "https://showmeanimage.com";
 
 const CATEGORIES = [
   { name: "Architecture", keywords: ["architecture","arch","building","buildings"] },
@@ -623,8 +646,11 @@ subCurateBtn.addEventListener("click", () => {
 // ── Curate state ───────────────────────────────────────────────────────────────
 let curateNums        = [];   // image numbers in current gallery order
 let carouselNums      = [];   // image numbers in carousel, in order
+let focalPoints       = {};   // { [imageNum]: "x% y%" } — carousel focal points for current category
 let selectedCurateIdx = null; // index in curateNums currently selected for swap
 let carouselDragSrc   = null; // index in carouselNums being dragged
+let focalEditingNum   = null; // image num currently open in the focal editor
+let focalPos          = { x: 50, y: 50 }; // working position while the focal editor is open
 
 async function loadCurateMode(category) {
   const curateGrid = document.getElementById("curate-grid");
@@ -658,6 +684,8 @@ async function loadCurateMode(category) {
   const savedCarousel = (saved.carousel || []).filter(n => allNums.includes(n));
   carouselNums = savedCarousel.length ? savedCarousel : allNums.slice(0, Math.min(6, allNums.length));
 
+  focalPoints = (saved.focal && typeof saved.focal === "object") ? { ...saved.focal } : {};
+
   selectedCurateIdx = null;
   renderCurateGrid(category);
   renderCarouselStrip(category);
@@ -673,7 +701,7 @@ function renderCurateGrid(category) {
     cell.className = "curate-cell" + (selectedCurateIdx === idx ? " selected" : "");
 
     const img = document.createElement("img");
-    img.src     = `/Images/${cat}/${cat} (${num}).jpg`;
+    img.src     = `${SITE_ORIGIN}/Images/${cat}/${cat} (${num}).jpg`;
     img.alt     = `${cat} ${num}`;
     img.loading = "lazy";
 
@@ -733,8 +761,9 @@ function renderCarouselStrip(category) {
     item.dataset.idx = idx;
 
     const img = document.createElement("img");
-    img.src     = `/Images/${cat}/${cat} (${num}).jpg`;
+    img.src     = `${SITE_ORIGIN}/Images/${cat}/${cat} (${num}).jpg`;
     img.alt     = `${cat} ${num}`;
+    if (focalPoints[num]) img.style.objectPosition = focalPoints[num];
 
     const numEl = document.createElement("span");
     numEl.className   = "co-num";
@@ -746,7 +775,13 @@ function renderCarouselStrip(category) {
     rm.title = "Remove from carousel";
     rm.addEventListener("click", e => { e.stopPropagation(); toggleCarousel(num, cat); });
 
-    item.append(img, numEl, rm);
+    const focalBtn = document.createElement("button");
+    focalBtn.className = "co-focal" + (focalPoints[num] ? " set" : "");
+    focalBtn.innerHTML = "&#8982;"; // target/crosshair glyph
+    focalBtn.title = focalPoints[num] ? "Adjust focal point" : "Set focal point";
+    focalBtn.addEventListener("click", e => { e.stopPropagation(); openFocalEditor(num, cat); });
+
+    item.append(img, numEl, rm, focalBtn);
 
     // Drag to reorder within the carousel strip
     item.addEventListener("dragstart", e => {
@@ -778,6 +813,75 @@ function renderCarouselStrip(category) {
   });
 }
 
+// ── Focal point editor ────────────────────────────────────────────────────────
+const focalModalBackdrop = document.getElementById("focal-modal-backdrop");
+const focalImgWrap       = document.getElementById("focal-img-wrap");
+const focalImg           = document.getElementById("focal-img");
+const focalCrosshair     = document.getElementById("focal-crosshair");
+const focalCoords        = document.getElementById("focal-coords");
+const focalCancelBtn     = document.getElementById("focal-cancel");
+const focalResetBtn      = document.getElementById("focal-reset");
+const focalSaveBtn       = document.getElementById("focal-save");
+
+function openFocalEditor(num, category) {
+  focalEditingNum = num;
+  const saved = focalPoints[num];
+  if (saved) {
+    const parts = saved.replace(/%/g, "").trim().split(/\s+/).map(Number);
+    focalPos = { x: clampPct(parts[0]), y: clampPct(parts[1]) };
+  } else {
+    focalPos = { x: 50, y: 50 };
+  }
+  focalImg.src = `${SITE_ORIGIN}/Images/${category}/${category} (${num}).jpg`;
+  updateFocalUI();
+  focalModalBackdrop.hidden = false;
+}
+
+function clampPct(n) { return Math.min(100, Math.max(0, Math.round(Number.isFinite(n) ? n : 50))); }
+
+function updateFocalUI() {
+  focalImg.style.objectPosition = `${focalPos.x}% ${focalPos.y}%`;
+  focalCrosshair.style.left = `${focalPos.x}%`;
+  focalCrosshair.style.top  = `${focalPos.y}%`;
+  focalCoords.textContent   = `${focalPos.x}%, ${focalPos.y}%`;
+}
+
+function setFocalFromEvent(e) {
+  const rect = focalImgWrap.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  focalPos = {
+    x: clampPct(((clientX - rect.left) / rect.width)  * 100),
+    y: clampPct(((clientY - rect.top)  / rect.height) * 100),
+  };
+  updateFocalUI();
+}
+
+focalImgWrap.addEventListener("click", setFocalFromEvent);
+let focalDragging = false;
+focalImgWrap.addEventListener("mousedown", e => { focalDragging = true; setFocalFromEvent(e); });
+window.addEventListener("mousemove", e => { if (focalDragging) setFocalFromEvent(e); });
+window.addEventListener("mouseup",   () => { focalDragging = false; });
+focalImgWrap.addEventListener("touchstart", e => { setFocalFromEvent(e); }, { passive: true });
+focalImgWrap.addEventListener("touchmove",  e => { setFocalFromEvent(e); }, { passive: true });
+
+focalResetBtn.addEventListener("click", () => { focalPos = { x: 50, y: 50 }; updateFocalUI(); });
+focalCancelBtn.addEventListener("click", closeFocalEditor);
+focalModalBackdrop.addEventListener("click", e => { if (e.target === focalModalBackdrop) closeFocalEditor(); });
+document.addEventListener("keydown", e => {
+  if (focalModalBackdrop.hidden) return;
+  if (e.key === "Escape") closeFocalEditor();
+});
+
+function closeFocalEditor() { focalModalBackdrop.hidden = true; focalEditingNum = null; }
+
+focalSaveBtn.addEventListener("click", () => {
+  if (focalEditingNum === null) return;
+  focalPoints[focalEditingNum] = `${focalPos.x}% ${focalPos.y}%`;
+  closeFocalEditor();
+  renderCarouselStrip(galleryCategory);
+});
+
 // ── Save curation ─────────────────────────────────────────────────────────────
 document.getElementById("save-curation-btn").addEventListener("click", async () => {
   const btn    = document.getElementById("save-curation-btn");
@@ -787,10 +891,15 @@ document.getElementById("save-curation-btn").addEventListener("click", async () 
   status.textContent = "";
   status.className   = "curate-save-status";
 
+  // Only persist focal points for images still in the carousel — drop stale entries.
+  const focalToSave = {};
+  carouselNums.forEach(n => { if (focalPoints[n]) focalToSave[n] = focalPoints[n]; });
+
   const res = await api("POST", "/api/curation", {
     category: galleryCategory,
     carousel: carouselNums,
     order:    curateNums,
+    focal:    focalToSave,
   }).catch(() => ({ ok: false, error: "Network error." }));
 
   if (res.ok) {
@@ -854,7 +963,7 @@ function renderGallery(images, category) {
     frame.className = "gallery-frame";
 
     const img = document.createElement("img");
-    img.src     = `/Images/${category}/${filename}`;
+    img.src     = `${SITE_ORIGIN}/Images/${category}/${filename}`;
     img.alt     = filename;
     img.loading = "lazy";
 
@@ -1013,4 +1122,36 @@ async function doCreateSeries() {
 @media (max-width: 600px) {
   .curate-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* Focal point button on carousel strip items */
+.co-focal {
+  position: absolute; bottom: 2px; left: 2px; width: 18px; height: 18px;
+  background: rgba(23,20,15,.82); border: none; border-radius: 1px;
+  color: rgba(255,255,255,.65); font-size: 12px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; padding: 0; transition: color .12s, background .12s;
+}
+.co-focal:hover { color: #fff; background: rgba(226,118,47,.9); }
+.co-focal.set   { color: var(--accent); }
+.co-focal.set:hover { color: #fff; }
+
+/* Focal point editor modal */
+.focal-modal { max-width: 480px; }
+.focal-img-wrap {
+  position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden;
+  border-radius: 4px; border: 1px solid var(--hairline); cursor: crosshair;
+  background: var(--surface); user-select: none;
+}
+.focal-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.focal-crosshair {
+  position: absolute; width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid #fff; box-shadow: 0 0 0 1.5px var(--accent), 0 1px 4px rgba(0,0,0,.5);
+  transform: translate(-50%, -50%); pointer-events: none;
+}
+.focal-crosshair::before, .focal-crosshair::after {
+  content: ""; position: absolute; background: var(--accent);
+}
+.focal-crosshair::before { left: 50%; top: -6px; bottom: -6px; width: 1px; transform: translateX(-50%); }
+.focal-crosshair::after  { top: 50%; left: -6px; right: -6px; height: 1px; transform: translateY(-50%); }
+.focal-coords { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); text-align: center; }
 </style>
