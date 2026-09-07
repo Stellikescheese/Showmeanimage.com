@@ -95,6 +95,9 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .cat-tab--series .series-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 .cat-tab--new { color: var(--accent); }
 .cat-tab--new:hover { border-color: var(--accent-dim); background: rgba(226,118,47,.07); }
+.cat-tab--misc { border-style: dashed; border-color: var(--hairline); color: var(--text-faint); }
+.cat-tab--misc:hover { color: var(--text-muted); border-color: var(--text-muted); }
+.cat-tab--misc.active { color: var(--text); border-color: var(--text-faint); background: rgba(168,154,130,.08); }
 
 /* ── Upload queue ── */
 .queue { display: flex; flex-direction: column; gap: 3px; }
@@ -482,11 +485,13 @@ function buildUploadCatTabs() {
   appendTab(uploadCatTabs, "Auto-detect", null, true, false, () => { activeUploadCategory = null; reResolveQueue(); });
   CATEGORIES.forEach(cat => appendTab(uploadCatTabs, cat.name, cat.name, false, false, () => { activeUploadCategory = cat.name; reResolveQueue(); }));
   series.forEach(s   => appendTab(uploadCatTabs, s.name, s.name, false, true, () => { activeUploadCategory = s.name; reResolveQueue(); }));
+  appendTab(uploadCatTabs, UNCATEGORISED, UNCATEGORISED, false, false, () => { activeUploadCategory = UNCATEGORISED; reResolveQueue(); });
 }
 
 function appendTab(container, label, value, isActive, isSeries, onClick) {
   const btn = document.createElement("button");
-  btn.className = "cat-tab" + (isSeries ? " cat-tab--series" : "") + (isActive ? " active" : "");
+  const isMisc = label === UNCATEGORISED;
+  btn.className = "cat-tab" + (isSeries ? " cat-tab--series" : "") + (isMisc ? " cat-tab--misc" : "") + (isActive ? " active" : "");
   if (isSeries) { const pip = document.createElement("span"); pip.className = "series-pip"; btn.appendChild(pip); }
   btn.appendChild(document.createTextNode(label));
   btn.addEventListener("click", () => {
@@ -507,7 +512,10 @@ function reResolveQueue() {
 // ── Gallery category tabs ─────────────────────────────────────────────────────
 function buildGalleryCatTabs() {
   galleryCatTabs.innerHTML = "";
-  const allCats = [...CATEGORIES.map(c => c.name), ...series.map(s => s.name)];
+  // Uncategorised is always included at the end — it's the catch-all for
+  // uploads that didn't match a category or series keyword, and otherwise
+  // the only way to find and delete them is by digging through the repo.
+  const allCats = [...CATEGORIES.map(c => c.name), ...series.map(s => s.name), UNCATEGORISED];
   if (allCats.length === 0) return;
 
   // Default to first category
@@ -947,10 +955,13 @@ function renderGallery(images, category) {
   galleryCount.textContent = images.length ? `${images.length} image${images.length === 1 ? "" : "s"}` : "";
 
   if (!images.length) {
+    const helpText = category === UNCATEGORISED
+      ? `<small>Files that don't match a category or series keyword land here automatically. Nothing to clean up right now.</small>`
+      : `<small>Upload images with <strong style="color:var(--accent)">${category.toLowerCase()}</strong> in the filename and they'll appear here.</small>`;
     galleryContent.innerHTML = `
       <div class="gallery-empty">
         <p>No images yet.</p>
-        <small>Upload images with <strong style="color:var(--accent)">${category.toLowerCase()}</strong> in the filename and they'll appear here.</small>
+        ${helpText}
       </div>`;
     return;
   }
